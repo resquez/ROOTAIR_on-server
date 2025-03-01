@@ -58,7 +58,7 @@ def notice_detail_page(notice_id):
     return render_template('notices/notice_detail.html', notice=notice)
 
 # 📌 공지사항 상세 API (JSON 반환)
-@notices_bp.route('/api/<int:notice_id>')
+@notices_bp.route('/api/detail/<int:notice_id>')
 def notice_detail_api(notice_id):
     conn = get_db_connection()
     cursor = conn.cursor()
