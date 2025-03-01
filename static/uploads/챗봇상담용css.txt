@@ -1,0 +1,46 @@
+.submit_button {
+    position: fixed;  /* 화면 기준으로 고정 */
+    bottom: 20px;  /* 창 아래쪽에서 20px 띄움 */
+    right: 20px;  /* 창 우측에서 20px 띄움 */
+    
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background-color: #28a745; /* 초록색 (성공 버튼) */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 마우스를 올렸을 때 */
+.submit_button:hover {
+    background-color: #218838; /* 더 어두운 초록색 */
+    transform: translateY(-3px);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* 클릭할 때 */
+.submit_button:active {
+    background-color: #1e7e34;
+    transform: translateY(0);
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* 비활성화된 버튼 */
+.submit_button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* 반응형 스타일 (작은 화면에서 버튼 크기 조절) */
+@media (max-width: 768px) {
+    .submit_button {
+        bottom: 10px;
+        right: 10px;
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+}

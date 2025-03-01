@@ -1,0 +1,283 @@
+body {
+    margin:0;
+    font-family: "Noto Sans KR";
+    font-weight: 400;
+    font-style: normal;
+}
+em {
+    font-style: normal;
+}
+a {
+    text-decoration: none;
+    color: #000;
+}
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 8px 12px;
+    border-bottom: 1px solid #ccc;
+}
+.navbar_logo{
+    width: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.navbar_logo img {
+    margin-left: 150px;
+    width: 210px;
+    height: auto;
+}
+.navbar_menu {
+    display: flex;
+    list-style: none;
+    padding-left: 0;
+    font-size: 27px;
+    font-weight: 500;
+    gap: 100px;
+}
+.navbar_menu li {
+    padding: 8px 20px;
+}
+.navbar_menu li:hover {
+    background-color: #e3dede;
+    border-radius: 10px;
+}
+
+.navbar_member {
+    display: flex;
+    list-style: none;
+    padding-left: 0;
+}
+.navbar_member li {
+    padding: 8px 14px;
+}
+.navbar_member li:hover {
+    background-color: #e3dede;
+    border-radius: 10px;
+}
+.navbar_signup {
+    margin-top: 13px;
+    margin-right: 10px;
+}
+.navbar_login {
+    font-size: 20px;
+    margin-top: 8px;
+    margin-right: 50px;
+    font-weight: 500;
+    border: 2px solid #000;
+    border-radius: 10px;
+}
+.navbar_togglebtn {
+    display: none;
+    position:absolute;
+    top: 32px;
+    right: 32px;
+    font-size: 24px; 
+}
+
+@media screen and (max-width: 1040px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .navbar_menu {
+        font-size:16px;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        gap: 0px
+    }
+    .navbar_menu li {
+        width: 100%;
+        text-align: center;
+    }
+    .navbar_member {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+    .navbar_member li {
+        width: 100%;
+        text-align: center;
+    }
+    .navbar_togglebtn {
+        display: block;
+    }
+    .navbar_menu.active,
+    .navbar_member.active {
+        display: flex;
+    }
+    .navbar_signup {
+        margin-left: 10px;
+    }
+    .navbar_login {
+        margin-left: 50px;
+        font-size:16px;
+        border: none;
+        border-radius: none;
+    }
+}
+.image_notice {
+    width: 100%; 
+    max-width: 1920px; 
+    height: auto; 
+    overflow: hidden; 
+}
+.image_notice img {
+    width: 100%; 
+    height: 350px; 
+    object-fit: cover; 
+    display: block;
+}
+
+/* 공지목록창 */
+.notice_container {
+    width: 90%;
+    margin-top: 0px;
+    margin-left: 50px; 
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    position: relative;  /* 하위 absolute 요소의 기준이 됨 */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* 내부 요소를 위/아래로 정렬 */
+}
+
+
+.notice_container h2 {
+    padding: 20px;
+    font-size: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.notice_table {
+    font-size: 25px;
+    width: 100%;
+    border-collapse: collapse;
+}
+.notice_table tr {
+    border-bottom: 1px solid #ddd;
+}
+
+.notice_table td {
+    padding: 12px;
+    text-align: left;
+}
+
+.notice_table td:first-child {
+    color: #9cb1ee;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.notice_table td:nthchild(3) {
+    text-align: right;
+    color: #666;
+}
+.notice_table td:nth-child(2),
+.notice_table td:nth-child(3) { 
+    font-size: 20px; 
+    color: #444; 
+}
+
+
+.pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.page-btn {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 15px;
+}
+
+.page-btn:hover {
+    background-color: #ddd;
+}
+
+.active-page {
+    padding: 8px 12px;
+    border-radius: 5px;    background-color: #000;
+    color: #fff;
+}
+
+
+/* 버튼 영역 꾸미기 */
+.submit_button {
+    position: absolute;  /* 부모 요소 기준으로 위치 설정 */
+    bottom: 20px;  /* 부모의 아래쪽에서 20px 띄움 */
+    right: 20px;  /* 부모의 오른쪽에서 20px 띄움 */
+
+    display: flex;  /* 내부 요소 정렬 */
+    align-items: center;
+    justify-content: center;
+
+    width: 120px;  /* 영역 너비 */
+    height: 50px;  /* 영역 높이 */
+    
+    border-radius: 12px;  /* 둥근 모서리 */
+    padding: 10px;
+}
+
+/* 버튼 영역 */
+.submit_button {
+    position: relative;  /* 부모 요소 내에서 정렬 */
+    width: 100%;  /* 부모 너비에 맞게 확장 */
+    display: flex;  
+    justify-content: flex-end; /* 내부 버튼을 우측 정렬 */
+    align-items: center;
+    padding: 10px 0;
+    margin-top: auto; /* 부모의 하단에 배치 */
+}
+
+/* 버튼 스타일 */
+.adsubmit_button {
+    display: inline-block;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background-color: #84bfff; /* 밝은 파란색 */
+    border: none;
+    border-radius: 8px; /* 둥근 모서리 */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 버튼 호버 효과 */
+.adsubmit_button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* 버튼 클릭 효과 */
+.adsubmit_button:active {
+    background-color: #004494;
+    transform: translateY(0);
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 반응형 스타일 (모바일) */
+@media (max-width: 600px) {
+    .adsubmit_button {
+        width: 100%;
+        font-size: 14px;
+        padding: 10px;
+    }
+}

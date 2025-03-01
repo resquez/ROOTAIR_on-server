@@ -1,0 +1,284 @@
+body {
+    margin:0;
+    font-family: "Noto Sans KR";
+    font-weight: 400;
+    font-style: normal;
+}
+em {
+    font-style: normal;
+}
+a {
+    text-decoration: none;
+    color: #000;
+}
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 8px 12px;
+    border-bottom: 1px solid #ccc;
+}
+.navbar_logo{
+    width: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.navbar_logo img {
+    margin-left: 150px;
+    width: 210px;
+    height: auto;
+}
+.navbar_menu {
+    display: flex;
+    list-style: none;
+    padding-left: 0;
+    font-size: 27px;
+    font-weight: 500;
+    gap: 100px;
+}
+.navbar_menu li {
+    padding: 8px 20px;
+}
+.navbar_menu li:hover {
+    background-color: #e3dede;
+    border-radius: 10px;
+}
+
+.navbar_member {
+    display: flex;
+    list-style: none;
+    padding-left: 0;
+}
+.navbar_member li {
+    padding: 8px 14px;
+}
+.navbar_member li:hover {
+    background-color: #e3dede;
+    border-radius: 10px;
+}
+.navbar_signup {
+    margin-top: 13px;
+    margin-right: 10px;
+}
+.navbar_login {
+    font-size: 20px;
+    margin-top: 8px;
+    margin-right: 50px;
+    font-weight: 500;
+    border: 2px solid #000;
+    border-radius: 10px;
+}
+.navbar_togglebtn {
+    display: none;
+    position:absolute;
+    top: 32px;
+    right: 32px;
+    font-size: 24px;    
+}
+
+@media screen and (max-width: 1040px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .navbar_menu {
+        font-size:16px;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        gap: 0px
+    }
+    .navbar_menu li {
+        width: 100%;
+        text-align: center;
+    }
+    .navbar_member {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+    .navbar_member li {
+        width: 100%;
+        text-align: center;
+    }
+    .navbar_togglebtn {
+        display: block;
+    }
+    .navbar_menu.active,
+    .navbar_member.active {
+        display: flex;
+    }
+    .navbar_signup {
+        margin-left: 10px;
+    }
+    .navbar_login {
+        margin-left: 50px;
+        font-size:16px;
+        border: none;
+        border-radius: none;
+    }
+}
+/*여기까지헤더*/
+.tab-menu {
+display: flex;
+justify-content: left;
+gap: 20px;
+margin-bottom: 20px;
+background: #1a3d5d;
+padding: 10px;
+}
+
+.tab-button {
+background: none;
+border: none;
+color: white;
+font-size: 30px;
+padding: 10px 20px;
+cursor: pointer;
+margin-left:30px;
+}
+
+.tab-button.active {
+font-weight: bold;
+border-bottom: 3px solid white;
+}
+
+/* 탭 내용 숨김/표시 */
+.tab-content {
+display: none;
+}
+
+.tab-content.active {
+display: block;
+}
+
+
+/* 배경 이미지 */
+.image_qna {
+width: 100%;
+height: 250px;
+overflow: hidden; /* 이미지가 넘치지 않도록 설정 */
+position: relative;
+}
+
+.image_qna img {
+width: 100%;
+height: 100%;
+object-fit: cover; /* 이미지가 div를 꽉 채우도록 조정 */
+position: absolute;
+top: 0;
+left: 0;
+}
+
+
+.qna_container {
+width: 80%;
+max-width: 1500px;
+margin: 30px auto;
+padding: 30px;
+
+}
+
+
+
+/* 문의사항 테이블 스타일 개선 */
+.question-table {
+width: 100%;
+border-collapse: collapse;
+margin-top: 15px;
+font-size: 20px;
+}
+
+.question-table th, .question-table td {
+padding: 15px; /* 기존 12px -> 15px */
+border-bottom: 1px solid #ddd;
+text-align: center;
+}
+
+.question-table th {
+background: #444; /* 네이비 계열 */
+color: white;
+font-weight: bold;
+}
+
+.question-table tr:hover {
+background: #f1f1f1;
+}
+
+/* 문의사항 제목 스타일 */
+h2 {
+font-size: 30px;
+margin-bottom: 15px;
+padding-bottom: 10px;
+border-bottom: 2px solid #777;
+}
+
+/* 페이지네이션 개선 */
+.pagination {
+text-align: center; /* 버튼들을 중앙 정렬 */
+margin-top: 20px;
+}
+
+.pagination button {
+background: white;
+color: black;
+border: 1px solid #333;
+padding: 10px 15px; /* 기존 8px -> 10px */
+margin: 10px;
+margin-top: 20px;
+cursor: pointer;
+border-radius: 5px;
+font-size: 16px;
+}
+
+.pagination button.active {
+background: #333; /* 네이비 계열 */
+color: white;
+font-weight: bold;
+border-radius: 8px;
+padding: 10px 15px;
+}
+
+.pagination button:hover {
+background: #555;
+}
+
+.navbar {
+display: flex;
+justify-content: space-between;
+align-items: center;
+background-color: #fff;
+padding: 12px 20px; /* 기존보다 패딩 증가 */
+border-bottom: 2px solid #ccc;
+
+}
+#qnawrite {
+width: 130px;
+background-color: #444; 
+color: white;
+font-size: 16px;
+font-weight: bold;
+padding: 12px 20px; 
+border: none;
+border-radius: 8px; 
+cursor: pointer;
+transition: all 0.3s ease-in-out;
+margin-left:1320px;
+}
+
+
+
+/* 마우스 호버 시 스타일 */
+#qnawrite:hover {
+background-color: #154166; /* 살짝 어두운 네이비 */
+}
+
+/* 버튼 클릭 시 스타일 */
+#qnawrite:active {
+background-color: #0f2c47;
+transform: scale(0.98); /* 살짝 눌리는 효과 */
+}

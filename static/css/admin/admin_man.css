@@ -1,0 +1,222 @@
+body {
+    margin:0;
+    font-family: "Noto Sans KR";
+    font-weight: 400;
+    font-style: normal;
+}
+em {
+    font-style: normal;
+}
+a {
+    text-decoration: none;
+    color: #000;
+}
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 8px 12px;
+    border-bottom: 1px solid #ccc;
+}
+.navbar_logo{
+    width: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.navbar_logo img {
+    margin-left: 150px;
+    width: 210px;
+    height: auto;
+}
+.navbar_menu {
+    display: flex;
+    list-style: none;
+    padding-left: 0;
+    font-size: 27px;
+    font-weight: 500;
+    gap: 100px;
+}
+.navbar_menu li {
+    padding: 8px 20px;
+}
+.navbar_menu li:hover {
+    background-color: #e3dede;
+    border-radius: 10px;
+}
+
+.navbar_member {
+    display: flex;
+    list-style: none;
+    padding-left: 0;
+}
+.navbar_member li {
+    padding: 8px 14px;
+}
+.navbar_member li:hover {
+    background-color: #e3dede;
+    border-radius: 10px;
+}
+.navbar_signup {
+    margin-top: 13px;
+    margin-right: 10px;
+}
+.navbar_login {
+    font-size: 20px;
+    margin-top: 8px;
+    margin-right: 50px;
+    font-weight: 500;
+    border: 2px solid #000;
+    border-radius: 10px;
+}
+.navbar_togglebtn {
+    display: none;
+    position:absolute;
+    top: 32px;
+    right: 32px;
+    font-size: 24px; 
+}
+
+@media screen and (max-width: 1040px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .navbar_menu {
+        font-size:16px;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        gap: 0px
+    }
+    .navbar_menu li {
+        width: 100%;
+        text-align: center;
+    }
+    .navbar_member {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+    .navbar_member li {
+        width: 100%;
+        text-align: center;
+    }
+    .navbar_togglebtn {
+        display: block;
+    }
+    .navbar_menu.active,
+    .navbar_member.active {
+        display: flex;
+    }
+    .navbar_signup {
+        margin-left: 10px;
+    }
+    .navbar_login {
+        margin-left: 50px;
+        font-size:16px;
+        border: none;
+        border-radius: none;
+    }
+}
+.admin_man_container {
+    margin:auto;
+    width: 100px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid #ddd;
+    width: 80%;
+    max-width: 1100px;
+    text-align: center;
+    height: 900px;
+    
+}
+
+.admin_man_container h2 {
+    margin-bottom: 15px;
+    font-size: 30px;
+}
+
+.admin_man_container input {
+    width: 70%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    text-align: left;
+}
+.admin_man_search {
+    text-align: left;
+    width: 25%;
+    margin-right: 10px;
+    padding: 20px;
+}
+
+.admin_man_container table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin_man_container th, td {
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+.admin_man_container th {
+    font-weight: bold;
+}
+
+input[type="text"] {
+    width: 90%;
+    padding: 3px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.pagination {
+    margin-top: 40px;
+}
+
+.page-btn {
+    cursor: pointer;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+.page-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.active-page {
+    font-weight: bold;
+    color: #fff;
+    background-color: #444;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.delete-btn {
+    color: white;
+    cursor: pointer;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    background-color: #555;
+    border-radius: 5px;
+}
+
+.delete-btn:hover {
+    background-color: #333;
+}
+
+.admin_man_search {
+    text-align: left;
+    width: 25%;
+    margin-right: 10px;
+    padding: 20px;
+}

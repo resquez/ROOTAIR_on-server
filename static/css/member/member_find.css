@@ -1,0 +1,316 @@
+body {
+    margin:0;
+    font-family: "Noto Sans KR";
+    font-weight: 400;
+    font-style: normal;
+}
+em {
+    font-style: normal;
+}
+a {
+    text-decoration: none;
+    color: #000;
+}
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 8px 12px;
+    border-bottom: 1px solid #ccc;
+}
+.navbar_logo{
+    width: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.navbar_logo img {
+    margin-left: 150px;
+    width: 210px;
+    height: auto;
+}
+.navbar_menu {
+    display: flex;
+    list-style: none;
+    padding-left: 0;
+    font-size: 27px;
+    font-weight: 500;
+    gap: 100px;
+}
+.navbar_menu li {
+    padding: 8px 20px;
+}
+.navbar_menu li:hover {
+    background-color: #e3dede;
+    border-radius: 10px;
+}
+
+.navbar_member {
+    display: flex;
+    list-style: none;
+    padding-left: 0;
+}
+.navbar_member li {
+    padding: 8px 14px;
+}
+.navbar_member li:hover {
+    background-color: #e3dede;
+    border-radius: 10px;
+}
+.navbar_signup {
+    margin-top: 13px;
+    margin-right: 10px;
+}
+.navbar_login {
+    font-size: 20px;
+    margin-top: 8px;
+    margin-right: 50px;
+    font-weight: 500;
+    border: 2px solid #000;
+    border-radius: 10px;
+}
+.navbar_togglebtn {
+    display: none;
+    position:absolute;
+    top: 32px;
+    right: 32px;
+    font-size: 24px;    
+}
+
+@media screen and (max-width: 1040px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .navbar_menu {
+        font-size:16px;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        gap: 0px
+    }
+    .navbar_menu li {
+        width: 100%;
+        text-align: center;
+    }
+    .navbar_member {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+    .navbar_member li {
+        width: 100%;
+        text-align: center;
+    }
+    .navbar_togglebtn {
+        display: block;
+    }
+    .navbar_menu.active,
+    .navbar_member.active {
+        display: flex;
+    }
+    .navbar_signup {
+        margin-left: 10px;
+    }
+    .navbar_login {
+        margin-left: 50px;
+        font-size:16px;
+        border: none;
+        border-radius: none;
+    }
+}
+
+
+
+/* 페이지 전체 레이아웃 고정 */
+.find_passwd_page {
+    display: flex;
+    flex-direction: column;  /* ✅ 요소들을 세로로 배치 */
+    justify-content: flex-start;  /* ✅ 부모의 상단에 위치 */
+    align-items: center;  /* ✅ 가로 중앙 정렬 */
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(222, 222, 222, 0.9);
+    padding-top: 50px; /* ✅ 추가 여백 (조정 가능) */
+}
+
+.find_passwd_box {
+    display: flex;  /* ✅ Flexbox 적용 */
+    flex-direction: column;  /* ✅ 내부 요소들을 세로로 배치 */
+    align-items: center;  /* ✅ 가로 중앙 정렬 */
+    justify-content: center;  /* ✅ 세로 중앙 정렬 (선택) */
+    width: 500px;  /* 고정된 너비 */
+    height: 450px;  /* 고정된 높이 */
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    flex-grow: 0;  /* ✅ 크기 자동 변경 방지 */
+}
+
+/* 내부 요소들이 세로로 나열되도록 설정 */
+label[for="find_passwd_label"] {
+    width: 100%;  /* 부모 크기를 그대로 유지 */
+    text-align: center;  /* ✅ 내부 텍스트 중앙 정렬 */
+    margin-bottom: 15px;  /* 요소 간 간격 추가 */
+    display: block; /* 블록 요소로 변경 */
+    white-space: pre-line; /* 개행 문자(\n) 및 <br> 태그 인식 */
+    
+    
+    font-size: 20px; /* 글자 크기 조정 (선택 사항) */
+    font-weight: bold; /* 글자 굵기 조정 (선택 사항) */
+    
+    margin: 10px;
+}
+label[for="new_passwd_label"]{
+    display: block; /* 블록 요소로 변경 */
+    white-space: pre-line; /* 개행 문자(\n) 및 <br> 태그 인식 */
+    text-align: center; /* 텍스트 가운데 정렬 */
+    width: 100%; /* 부모 컨테이너 기준 전체 너비 */
+    font-size: 20px; /* 글자 크기 조정 (선택 사항) */
+    font-weight: bold; /* 글자 굵기 조정 (선택 사항) */
+    margin-bottom: 5px; /* 아래 간격 추가 */
+    margin: 10px;
+}
+/* Step 영역 공통 설정 */
+#step1, #step2, #step3 {
+    width: 100%;  /* 부모 크기를 그대로 유지 */
+    text-align: center;  /* ✅ 내부 텍스트 중앙 정렬 */
+    margin-bottom: 15px;  /* 요소 간 간격 추가 */
+    display: flex;
+    flex-direction: column;  /* ✅ 내부 요소를 세로 배치 */
+    align-items: center;  /* ✅ 내부 요소 가로 중앙 정렬 */
+    gap: 15px;  /* 입력 필드와 버튼 간격 */
+}
+
+
+
+
+
+
+.find_pw_code{
+    display: flex;
+    height: 15vh;
+    width: 100%;
+    flex-direction: column; /* 아이템들을 수직으로 나란히 정렬 */
+    justify-content: flex-end; /* 세로 축 상단 정령 */
+    align-items: center; /* 가로 축 중앙 정렬 */
+
+    gap: 20px;
+}
+
+input[type="text"] {
+    
+    width: 100%;
+    padding: 10px;
+    border: 2px solid black;
+    border-radius: 10px; 
+    margin-bottom: 10px; 
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #333;  /* 기본 배경색 */
+    color: white;            /* 글자색 */
+    border: none;            /* 테두리 없음 */
+    border-radius: 5px;      /* 모서리 둥글게 */
+    padding: 10px 20px;      /* 버튼 안쪽 여백 (선택 사항) */
+    cursor: pointer;        /* 마우스를 올렸을 때 포인터 모양 */
+    transition: background-color 0.3s ease; /* 부드러운 색상 전환 */
+}
+
+button:hover {
+    background-color: #555;  /* 마우스를 올렸을 때 배경색 변경 */
+}
+
+
+
+
+
+
+.new_passwd_page{
+    height: 100vh; /* 페이지의 전체 높이 */
+    display: flex; /* Flexbox 적용 */
+    justify-content: center; /* 수평 중앙 정렬 */
+    align-items: flex-start; /* 수직 중앙 정렬 */
+    margin: 0; /* 기본 여백 제거 */
+    background-color: rgba(222, 222, 222, 0.9); 
+    padding-top: 100px;
+}
+.new_passwd_box {
+
+    height: 40vh;
+    display: flex;
+    justify-content: top; /* 세로 축 상단 정령 */
+    align-items: center; /* 가로 축 중앙 정렬 */
+    flex-direction: column; /* 아이템들을 수직으로 나란히 정렬 */
+    
+    width: 100%;
+    max-width: 500px; 
+    padding: 50px;
+    background-color: rgba(255, 255, 255, 0.9); 
+    border-radius: 10px;
+    
+}
+
+
+
+input[name="password"], input[name="password_confirm"] {
+    
+    width: 400px;
+    padding: 10px;
+    border: 2px solid black;
+    border-radius: 10px; 
+    margin-bottom: 10px; 
+    font-size: 16px;
+    box-sizing: border-box;
+}
+.new_passwd_input {
+    display: flex;
+    height: 20vh; /* 기존 높이 유지 */
+    min-height: 300px; /* 최소 높이 설정 (너무 작아지는 것 방지) */
+    width: 100%;
+    flex-direction: column; /* 아이템들을 수직으로 나란히 정렬 */
+    justify-content: top; /* ⚡ 변경: flex-end → center로 설정하여 이동 방지 */
+    align-items: center; /* 가로 축 중앙 정렬 */
+    
+    gap: 10px;
+    position: relative; /* 부모 요소의 영향을 덜 받도록 설정 */
+    overflow: hidden; /* 내용이 넘쳐도 부모 요소 크기를 유지 */
+
+
+}
+
+/* 에러 메시지 위치 고정 */
+.error-message {
+
+
+    left: 50%;
+    transform: translateX(0%); /* 가로 중앙 정렬 */
+    color: red;
+    font-size: 14px;
+    display: none; /* 기본적으로 숨김 */
+    white-space: nowrap; /* 텍스트가 여러 줄로 바뀌지 않도록 설정 */
+    display: flex;
+
+}
+
+#new_passwd_input_form {
+    display: flex;
+    flex-direction: column; /* 아이템들을 수직으로 나란히 정렬 */
+    justify-content: center; /* 수직직 중앙 정렬 */
+    align-items: center; /* 가로 축 중앙 정렬 */
+}
+.new_passwd_butt {
+    display: flex;
+    justify-content: center; /* 가로 중앙 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
+    width: 100%; /* 부모의 전체 너비 */
+    margin-top: -50px; /* 버튼 위쪽 여백 */
+}
+
+.hidden { display: none; }
+.message { margin-top: 10px; font-size: 14px; color: red; }

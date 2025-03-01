@@ -1,0 +1,1093 @@
+body {
+    margin:0;
+    font-family: "Noto Sans KR";
+    font-weight: 400;
+    font-style: normal;
+}
+em {
+    font-style: normal;
+}
+a {
+    text-decoration: none;
+    color: #000;
+}
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 8px 12px;
+    border-bottom: 1px solid #ccc;
+}
+.navbar_logo{
+    width: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.navbar_logo img {
+    margin-left: 150px;
+    width: 210px;
+    height: auto;
+}
+.navbar_menu {
+    display: flex;
+    list-style: none;
+    padding-left: 0;
+    font-size: 27px;
+    font-weight: 500;
+    gap: 100px;
+}
+.navbar_menu li {
+    padding: 8px 20px;
+}
+.navbar_menu li:hover {
+    background-color: #e3dede;
+    border-radius: 10px;
+}
+
+.navbar_member {
+    display: flex;
+    list-style: none;
+    padding-left: 0;
+}
+.navbar_member li {
+    padding: 8px 14px;
+}
+.navbar_member li:hover {
+    background-color: #e3dede;
+    border-radius: 10px;
+}
+.navbar_signup {
+    margin-top: 13px;
+    margin-right: 10px;
+}
+.navbar_login {
+    font-size: 20px;
+    margin-top: 8px;
+    margin-right: 50px;
+    font-weight: 500;
+    border: 2px solid #000;
+    border-radius: 10px;
+}
+.navbar_togglebtn {
+    display: none;
+    position:absolute;
+    top: 32px;
+    right: 32px;
+    font-size: 24px;    
+}
+
+@media screen and (max-width: 1040px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .navbar_menu {
+        font-size:16px;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        gap: 0px
+    }
+    .navbar_menu li {
+        width: 100%;
+        text-align: center;
+    }
+    .navbar_member {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+    .navbar_member li {
+        width: 100%;
+        text-align: center;
+    }
+    .navbar_togglebtn {
+        display: block;
+    }
+    .navbar_menu.active,
+    .navbar_member.active {
+        display: flex;
+    }
+    .navbar_signup {
+        margin-left: 10px;
+    }
+    .navbar_login {
+        margin-left: 50px;
+        font-size:16px;
+        border: none;
+        border-radius: none;
+    }
+}
+/* 사용자 정보 카드 */
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 마일리지 값과 박스 중앙 정렬 유지 */
+    width: 80%;
+    max-width: 900px;
+    margin: 50px auto 0;
+  }
+  
+  .user-info h2 {
+    align-self: flex-start; /* "나의 정보"만 왼쪽 정렬 */
+    text-align: left;
+  }
+  
+  .info-box {
+    background: white;
+    width: 100%;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+  }
+  
+  /* 정보 컨테이너 */
+  .info-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+  }
+  
+  /* 프로필 정보 */
+  .profile {
+      text-align: left;
+      padding-left: 15px;
+  }
+  
+  .profile p {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      margin: 3px 0; /* 행간 좁히기 */
+  }
+  
+  .profile p strong {
+      min-width: 80px;  /* PHONE, EMAIL, ADDRESS의 너비를 고정 */
+      text-align: left;  /* 왼쪽 정렬 */
+  }
+  
+  .profile p .separator {
+      min-width: 20px;  /* | 기호의 너비를 고정하여 정렬을 일정하게 유지 */
+      text-align: center;
+  }
+  
+  .profile p span {
+      flex-grow: 1;  /* 나머지 내용을 자동 확장하여 일정한 간격 유지 */
+  }
+  
+  h2 {
+      font-size: 20px;
+      color: #333;
+  }
+  
+  h3 {
+      font-size: 22px;
+      margin: 10px 0;
+  }
+  
+  .eng-name {
+      font-size: 16px;
+      color: gray;
+      margin-left: 10px;
+  }
+  
+  p {
+      font-size: 14px;
+      color: #555;
+  }
+  
+  .circle-container {
+    display: flex;
+    justify-content: center; /* 가운데 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
+    gap: 10px; /* 원형 요소 간 간격 */
+    flex-wrap: wrap; /* 화면이 작으면 자동 줄바꿈 */
+    padding-right: 15px;
+}
+  
+  .circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* 원형 내부 값 중앙 정렬 유지 */
+    border: 5px solid;
+    position: relative; /* 내부 텍스트 정렬을 위한 설정 */
+  }
+  
+  .circle p {
+    font-size: 12px;
+    margin: 0;
+    position: absolute;
+    top: 32%; /* 원형 위쪽에 위치 */
+    width: 100%;
+    text-align: center;
+  }
+  
+  .circle h2 {
+    font-size: 20px;
+    margin: 0;
+    position: absolute;
+    top: 55%; /* 숫자를 원형의 정중앙에 배치 */
+    transform: translateY(-50%); /* 수직 중앙 정렬 */
+    width: 100%;
+    text-align: center;
+  }
+
+  .deep-blue {
+    border-color: #0C68BE;
+    color: #0C68BE;
+    opacity: 0.91;
+  }
+
+  .right-blue {
+    border-color: #0C89BE;
+    color: #0C89BE;
+    opacity: 0.91;
+  }
+  
+  .green {
+    border-color: #0CBE6E;
+    color: #0CBE6E;
+    opacity: 0.91;
+  }
+
+  .circle p {
+    font-size: 12px;
+    margin: 0;
+    text-align: center;
+  }
+  
+  .box {
+      position: relative;
+      width: 1284px;
+      height: 841px;
+    }
+    
+    .box .group {
+      position: fixed;
+      width: 1286px;
+      height: 841px;
+      top: 0;
+      left: 0;
+    }
+    
+    .box .button-danger {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      position: absolute;
+      top: 801px;
+      left: 1182px;
+      background-color: #eb221e;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid;
+      border-color: #bf0f0c;
+    }
+    
+    .box .button {
+      all: unset;
+      box-sizing: border-box;
+      position: relative;
+      width: fit-content;
+      margin-top: -1.00px;
+      font-family: "Inter-Regular", Helvetica;
+      font-weight: 400;
+      color: #fde8e7;
+      font-size: 16px;
+      letter-spacing: 0;
+      line-height: 16px;
+      white-space: nowrap;
+    }
+    
+    .box .div {
+      all: unset;
+      box-sizing: border-box;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      position: absolute;
+      top: 801px;
+      left: 1045px;
+      background-color: #2c2c2c;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid;
+      border-color: #2c2c2c;
+    }
+    
+    .box .text-wrapper {
+      all: unset;
+      box-sizing: border-box;
+      position: relative;
+      width: fit-content;
+      margin-top: -1.00px;
+      font-family: "Inter-Regular", Helvetica;
+      font-weight: 400;
+      color: #f5f5f5;
+      font-size: 16px;
+      letter-spacing: 0;
+      line-height: 16px;
+      white-space: nowrap;
+    }
+    
+    .box .frame {
+      display: flex;
+      width: 896px;
+      align-items: center;
+      gap: 32px;
+      position: absolute;
+      top: 399px;
+      left: 9px;
+    }
+    
+    .box .text-wrapper-2 {
+      position: relative;
+      flex: 1;
+      margin-top: -0.50px;
+      font-family: "Montserrat-Bold", Helvetica;
+      font-weight: 700;
+      color: #333333;
+      font-size: 24px;
+      letter-spacing: 0;
+      line-height: normal;
+    }
+    
+    .box .div-wrapper {
+      display: flex;
+      width: 896px;
+      align-items: center;
+      gap: 32px;
+      position: absolute;
+      top: 98px;
+      left: 9px;
+    }
+    
+    .box .modal-detail {
+      display: flex;
+      flex-direction: column;
+      width: 1286px;
+      height: 344px;
+      align-items: flex-start;
+      gap: 40px;
+      padding: 40px 49px;
+      position: absolute;
+      top: 438px;
+      left: -1px;
+      background-color: #ffffff;
+      border-radius: 16px;
+      border: 1px solid;
+      border-color: #0c68be40;
+    }
+    
+    .box .frame-2 {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+      position: relative;
+      align-self: stretch;
+      width: 100%;
+      flex: 0 0 auto;
+    }
+    
+    .box .frame-3 {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      align-self: stretch;
+      width: 100%;
+      flex: 0 0 auto;
+    }
+    
+    .box .img {
+      position: relative;
+      width: 32px;
+      height: 32px;
+    }
+    
+    .box .text-wrapper-3 {
+      position: relative;
+      flex: 1;
+      font-family: "Montserrat-Bold", Helvetica;
+      font-weight: 700;
+      color: #333333;
+      font-size: 16px;
+      letter-spacing: 0;
+      line-height: normal;
+    }
+    
+    .box .frame-4 {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      position: relative;
+      align-self: stretch;
+      width: 100%;
+      flex: 0 0 auto;
+    }
+    
+    .box .frame-5 {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      position: relative;
+      flex: 0 0 auto;
+    }
+    
+    .box .text-wrapper-4 {
+      position: relative;
+      width: fit-content;
+      margin-top: -1.00px;
+      font-family: "Montserrat-Bold", Helvetica;
+      font-weight: 700;
+      color: #333333;
+      font-size: 22px;
+      letter-spacing: 0;
+      line-height: normal;
+    }
+    
+    .box .text-wrapper-5 {
+      position: relative;
+      width: fit-content;
+      font-family: "Montserrat-SemiBold", Helvetica;
+      font-weight: 600;
+      color: #333333;
+      font-size: 16px;
+      letter-spacing: 0;
+      line-height: normal;
+    }
+    
+    .box .frame-6 {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      position: relative;
+      flex: 1;
+      flex-grow: 1;
+    }
+    
+    .box .p {
+      position: relative;
+      width: 90px;
+      margin-top: -1.00px;
+      font-family: "Montserrat-Bold", Helvetica;
+      font-weight: 400;
+      color: #333333;
+      font-size: 16px;
+      letter-spacing: 0;
+      line-height: normal;
+    }
+    
+    .box .span {
+      font-weight: 700;
+    }
+    
+    .box .text-wrapper-6 {
+      font-family: "Montserrat-Regular", Helvetica;
+    }
+    
+    .box .line {
+      position: relative;
+      flex: 1;
+      align-self: stretch;
+      flex-grow: 1;
+      object-fit: cover;
+    }
+    
+    .box .la-plane {
+      position: relative;
+      width: 24px;
+      height: 24px;
+    }
+    
+    .box .div-2 {
+      position: relative;
+      width: 91px;
+      margin-top: -1.00px;
+      font-family: "Montserrat-Bold", Helvetica;
+      font-weight: 400;
+      color: #333333;
+      font-size: 16px;
+      text-align: right;
+      letter-spacing: 0;
+      line-height: normal;
+    }
+    
+    .box .text-wrapper-7 {
+      font-family: "Montserrat-SemiBold", Helvetica;
+      font-weight: 600;
+    }
+    
+    .box .frame-7 {
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      flex: 0 0 auto;
+    }
+    
+    .box .image {
+      position: relative;
+      width: 64px;
+      height: 28px;
+      object-fit: cover;
+    }
+    
+    .box .text-wrapper-8 {
+      position: relative;
+      width: fit-content;
+      font-family: "Montserrat-Medium", Helvetica;
+      font-weight: 500;
+      color: #000000;
+      font-size: 16px;
+      text-align: center;
+      letter-spacing: 0;
+      line-height: normal;
+    }
+    
+    .box .frame-8 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      flex: 1;
+      flex-grow: 1;
+    }
+    
+    .box .text-wrapper-9 {
+      position: relative;
+      width: fit-content;
+      font-family: "Montserrat-SemiBold", Helvetica;
+      font-weight: 600;
+      color: #000000;
+      font-size: 18px;
+      text-align: center;
+      letter-spacing: 0;
+      line-height: normal;
+    }
+    
+    .box .line-2 {
+      position: relative;
+      flex: 1;
+      flex-grow: 1;
+      height: 1px;
+      object-fit: cover;
+    }
+    
+    .box .frame-9 {
+      display: flex;
+      flex-direction: column;
+      width: 66px;
+      align-items: flex-start;
+      gap: 4px;
+      position: relative;
+    }
+    
+    .box .text-wrapper-10 {
+      position: relative;
+      align-self: stretch;
+      margin-top: -1.00px;
+      font-family: "Montserrat-Bold", Helvetica;
+      font-weight: 700;
+      color: #333333;
+      font-size: 16px;
+      text-align: center;
+      letter-spacing: 0;
+      line-height: normal;
+    }
+    
+    .box .text-wrapper-11 {
+      position: relative;
+      align-self: stretch;
+      font-family: "Montserrat-Italic", Helvetica;
+      font-style: italic;
+      color: #f6876f;
+      font-size: 16px;
+      text-align: center;
+      line-height: normal;
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+    
+    .box .line-3 {
+      position: relative;
+      flex: 1;
+      flex-grow: 1;
+      height: 7.36px;
+      object-fit: cover;
+    }
+    
+    .box .text-wrapper-12 {
+      position: absolute;
+      width: 810px;
+      top: 0;
+      left: 238px;
+      font-family: "Roboto-Regular", Helvetica;
+      font-weight: 400;
+      color: #000000;
+      font-size: 57px;
+      text-align: center;
+      letter-spacing: -0.25px;
+      line-height: 64px;
+      white-space: nowrap;
+    }
+    
+    .box .overlap {
+      position: absolute;
+      width: 1284px;
+      height: 225px;
+      top: 138px;
+      left: 0;
+      background-image: url(./img/rectangle-44.png);
+      background-size: 100% 100%;
+    }
+    
+    .box .overlap-group {
+      position: absolute;
+      width: 886px;
+      height: 175px;
+      top: 25px;
+      left: 83px;
+    }
+    
+    .box .overlap-group-wrapper {
+      position: absolute;
+      width: 294px;
+      height: 37px;
+      top: 19px;
+      left: 0;
+    }
+    
+    .box .overlap-group-2 {
+      position: relative;
+      width: 290px;
+      height: 37px;
+    }
+    
+    .box .text-wrapper-13 {
+      position: absolute;
+      width: 150px;
+      height: 37px;
+      top: 0;
+      left: 0;
+      font-family: "Inter-Regular", Helvetica;
+      font-weight: 400;
+      color: #000000;
+      font-size: 34px;
+      letter-spacing: 1.70px;
+      line-height: 34px;
+      white-space: nowrap;
+    }
+    
+    .box .text-wrapper-14 {
+      position: absolute;
+      width: 176px;
+      height: 37px;
+      top: 0;
+      left: 114px;
+      font-family: "Inter-Regular", Helvetica;
+      font-weight: 400;
+      color: #666666;
+      font-size: 22px;
+      letter-spacing: 2.20px;
+      line-height: 22px;
+    }
+    
+    .box .overlap-2 {
+      position: absolute;
+      width: 883px;
+      height: 175px;
+      top: 0;
+      left: 3px;
+    }
+    
+    .box .overlap-wrapper {
+      position: absolute;
+      width: 864px;
+      height: 21px;
+      top: 80px;
+      left: 0;
+    }
+    
+    .box .overlap-3 {
+      position: relative;
+      width: 862px;
+      height: 21px;
+    }
+    
+    .box .div-3 {
+      position: absolute;
+      width: 862px;
+      top: 0;
+      left: 0;
+      font-family: "Inter-Regular", Helvetica;
+      font-weight: 400;
+      color: #000000;
+      font-size: 21px;
+      letter-spacing: 0;
+      line-height: 21px;
+    }
+    
+    .box .line-4 {
+      position: absolute;
+      width: 1px;
+      height: 15px;
+      top: 3px;
+      left: 88px;
+      object-fit: cover;
+    }
+    
+    .box .group-2 {
+      position: absolute;
+      width: 864px;
+      height: 21px;
+      top: 113px;
+      left: 0;
+    }
+    
+    .box .text-wrapper-15 {
+      font-family: "Inter-Regular", Helvetica;
+      font-weight: 400;
+      color: #000000;
+      font-size: 21px;
+      letter-spacing: 0;
+      line-height: 21px;
+    }
+    
+    .box .group-wrapper {
+      position: absolute;
+      width: 175px;
+      height: 175px;
+      top: 0;
+      left: 708px;
+      border-radius: 87.5px;
+      border: 8px solid;
+      border-color: #0c68bee8;
+    }
+    
+    .box .group-3 {
+      position: relative;
+      width: 145px;
+      height: 60px;
+      top: 48px;
+      left: 9px;
+    }
+    
+    .box .overlap-group-3 {
+      position: relative;
+      width: 141px;
+      height: 60px;
+    }
+    
+    .box .text-wrapper-16 {
+      position: absolute;
+      width: 141px;
+      top: 0;
+      left: 0;
+      font-family: "Roboto-Regular", Helvetica;
+      font-weight: 400;
+      color: #000000;
+      font-size: 14px;
+      text-align: center;
+      letter-spacing: -0.25px;
+      line-height: 28px;
+      white-space: nowrap;
+    }
+    
+    .box .text-wrapper-17 {
+      position: absolute;
+      width: 112px;
+      top: 24px;
+      left: 15px;
+      font-family: "Inter-Regular", Helvetica;
+      font-weight: 400;
+      color: #000000;
+      font-size: 37px;
+      text-align: center;
+      letter-spacing: 0;
+      line-height: 37px;
+      white-space: nowrap;
+    }
+    
+    .box .group-4 {
+      position: absolute;
+      width: 633px;
+      height: 21px;
+      top: 146px;
+      left: 3px;
+    }
+    
+    .box .overlap-4 {
+      position: relative;
+      width: 631px;
+      height: 21px;
+    }
+    
+    .box .ADDRESS {
+      position: absolute;
+      top: 0;
+      left: 0;
+      font-family: "Inter-Regular", Helvetica;
+      color: #000000;
+      font-size: 21px;
+      line-height: 21px;
+      white-space: nowrap;
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+    
+    .box .line-5 {
+      position: absolute;
+      width: 1px;
+      height: 15px;
+      top: 3px;
+      left: 113px;
+      object-fit: cover;
+    }
+    
+    .box .group-5 {
+      position: absolute;
+      width: 175px;
+      height: 175px;
+      top: 25px;
+      left: 1023px;
+      border-radius: 87.5px;
+      border: 8px solid;
+      border-color: #0cbe6de8;
+    }
+    
+    .ticket-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center; /* 박스 중앙 정렬 유지 */
+      width: 80%;
+      max-width: 900px;
+      margin: 50px auto 0;
+  }
+  
+  
+  .ticket-info h2 {
+      align-self: flex-start; /* 제목만 왼쪽 정렬 */
+      text-align: left;
+  }
+  
+  /* 정보 컨테이너 */
+  .ticket-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+  }
+  
+  .user-buttons {
+    display: flex;
+    justify-content: flex-end; /* 버튼을 오른쪽으로 정렬 */
+    gap: 10px; /* 버튼 사이 간격 */
+    margin-top: 20px; /* 위쪽 여백 */
+    width: 100%; /* 부모 컨테이너 크기에 맞춤 */
+    padding-bottom: 50px;
+}
+
+  .edit-btn, .delete-btn {
+      padding: 10px 20px;
+      font-size: 14px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+  }
+
+  .edit-btn {
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+  }
+
+  .edit-btn:hover {
+    background-color: #ddd;
+    background-color: #555;
+  }
+
+  .delete-btn {
+      background-color: #dc3545;
+      color: white;
+  }
+
+  .delete-btn:hover {
+      background-color: #a71d2a;
+  }
+
+/* ✅ ticket-container를 중앙 정렬 */
+#ticket-container {
+  width: 100%; /* 전체 너비 */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 중앙 정렬 */
+}
+
+/* ✅ 항공권 카드 너비 조정 (나의 정보 카드와 동일하게) */
+.ticket {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  width: 100%; /* 부모(ticket-container) 기준 100% */
+  max-width: 900px; /* 최대 너비 유지 */
+  margin-bottom: 10px; /* 아래쪽 간격 */
+}
+
+/* ✅ 항공권 목록 컨테이너 스타일 조정 */
+.ticket-info {
+  display: flex;
+  align-items: center; /* 모든 카드 중앙 정렬 */
+}
+
+/* 상단 헤더 (가는 편 & 상세 보기 버튼) */
+.ticket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* 상단 정렬 */
+  font-weight: bold;
+  margin-bottom: 15px;
+  margin-top: -5px;
+}
+
+/* "가는 편" */
+.title {
+  font-size: 16px;
+  font-weight: bold;  
+}
+
+.airport_info {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* 상세 보기 버튼 */
+.details-btn {
+  font-size: 12px;
+  padding: 5px 12px;
+  border: 1px solid #bbb;
+  background: white;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: 0.2s;
+  white-space: nowrap;
+}
+
+.details-btn:hover {
+  background: #f0f0f0;
+}
+
+.passenger-name {
+  padding-left: 10px;
+}
+
+.cabin-class {
+  padding-right: 10px;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center; /* 수직 중앙 정렬 */
+}
+
+.ticket-body {
+  display: grid;
+  grid-template-columns: 120px auto 250px; /* 왼쪽 150px, 중앙 자동, 오른쪽 200px */
+  align-items: center;                     /* 세로 정렬(중앙) */
+  column-gap: 20px;                        /* 열 간격 */
+}
+
+/* 경로 정보 (첫 번째 줄) */
+.route {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.flight-info {
+  display: flex;
+  flex-direction: row; /* 기본값이지만 명시적으로 작성 */
+  justify-content: space-between; /* 각 영역 사이에 간격을 두려면 */
+  align-items: center; /* 수직 중앙 정렬 */
+}
+
+.last-name,
+.first-name {
+  display: block;
+  text-transform: uppercase;
+  font-size: 16px;            /* 폰트 크기 */
+  color: #4E4E4E;             /* 텍스트 색상 */
+  font-weight: 800; /* 보통 두께 */
+
+}
+
+.flight-segment {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  row-gap: 4px; /* 줄 간격 조절 */
+}
+
+.flight-segment .date {
+  grid-column: 1 / span 2; /* 첫 번째 줄 전체 사용 */
+}
+
+.flight-segment .time {
+  grid-column: 1; /* 두 번째 줄 왼쪽 */
+  font-size: 16px;            /* 폰트 크기 */
+}
+
+.flight-segment .airport {
+  grid-column: 2; /* 두 번째 줄 오른쪽 */
+  font-weight: bold;
+}
+
+.plane-image img {
+  width: 160px;   /* 원하는 너비 */
+  object-fit: contain; /* 이미지 비율 유지 */
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+.seat-image {
+  padding-right: 15px;
+}
+
+.class-label {
+  font-weight: 800; /* 보통 두께 */
+}
+
+.header-info {
+  display: inline-flex;   /* 가로 배치 + 한 줄에서 정렬 */
+  align-items: center;    /* 아이콘과 텍스트를 수직 가운데 정렬 */
+}
+
+.header-info img {
+  width: 25px;   /* 원하는 너비 */
+  object-fit: contain; /* 이미지 비율 유지 */
+  margin-right: 8px;
+}
+
+.unit {
+    font-size: 12px;
+    font-weight: 300;
+    margin-left: 1px;
+}
