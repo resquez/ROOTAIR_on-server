@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <link rel="stylesheet" href="/static/css/member/member_signup.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script> 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const togglebtn = document.querySelector('.navbar_togglebtn');
+        const menu = document.querySelector('.navbar_menu');
+        const member = document.querySelector('.navbar_member');
+    
+        togglebtn.addEventListener('click', ()=>{
+            menu.classList.toggle('active');
+            member.classList.toggle('active');
+        });
+    </script>
+    <script>
+        // 네비게이션 스크립트
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch("http://58.127.241.84:60119/api/member/status")
+            .then(response => response.json())
+            .then(data => {
+                const navbarMember = document.getElementById("navbar_member");
+                navbarMember.innerHTML = "";  // 기존 내용 초기화
+
+                if (data.is_authenticated) {
+                    if (data.is_admin) {
+                        // ✅ 관리자 계정
+		                        navbarMember.innerHTML = `
+                            <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
+                            <li class="navbar_login"><a href="http://58.127.241.84:61080/admin/admin_man.html">회원정보</a></li>
+                        `;
+                    } else {
+                        // ✅ 일반 로그인 사용자
+                        navbarMember.innerHTML = `
+                            <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
+                            <li class="navbar_login"><a href="http://58.127.241.84:61080/mypage/mypage.html">마이페이지</a></li>
+                        `;
+                    }
+                } else {
+                    // ✅ 비로그인 상태
+                    navbarMember.innerHTML = `
+                        <li class="navbar_signup"><a href="http://58.127.241.84:61080/member/member_signup.html">회원가입</a></li>
+                        <li class="navbar_login"><a href="http://58.127.241.84:61080/member/member_login.html">로그인</a></li>
+                    `;
+                }
+            })
+            .catch(error => console.error("사용자 상태 확인 중 오류 발생:", error));
+    });
+    </script>
+</head>
+<!--네비게이션 메뉴 바-->
+<body>
+    <nav class="navbar">
+        <div class="navbar_logo">
+            <a href="http://58.127.241.84:61080/main/main.html">
+                <img src="/static/images/rootair.jpg"/>
+            </a>
+        </div>
+        <ul class="navbar_menu">
+            <li><a href="http://58.127.241.84:61080/main/main.html">예약</a></li>
+            <li><a href="http://58.127.241.84:61080/notices/notices.html">공지사항</a></li>
+            <li><a href="http://58.127.241.84:61080/qna/qna.html">문의사항</a></li>            
+        </ul>
+        <ul class="navbar_member" id="navbar_member">
+            <!-- 로그인 상태에 따라 동적 업데이트 -->
+        </ul>
+        <img class="navbar_togglebtn" src="/static/images/topbar.jpg" width="24" height="18"/>
+    </nav>
+</body>
+<body>
+    <div class="container">
+        <label for="signup">회원가입</label>
+        <form id="signupForm" class="signup-form-container">
+            <div class="input-group">
+                <label for="username">이름</label>
+                <input type="text" id="username" name="username" placeholder="이름을 입력하세요" required>
+                <span id="usernameError" style="color: red; display: none;">이름은 최소 2자 이상 입력해야 합니다.</span>
+            </div>
+            
+            <div class="input-group">
+                <label for="user_id">아이디</label>
+                <div class="check_container">
+                    <input type="text" id="user_id" name="user_id" placeholder="아이디를 입력하세요" required>
+                    <button type="button" onclick="checkId()">아이디 중복 확인</button>
+                </div>
+                <span id="idCheckResult"></span>
+            </div>
+        
+            <div class="input-group">
+                <label for="password">비밀번호</label>
+                <input type="password" id="password" name="password" placeholder="비밀번호 입력" required>
+                <span id="passwordError" style="color: red; display: none;">비밀번호는 영문, 숫자, 특수문자를 포함한 8~20자로 설정해야 합니다.</span>
+            </div>
+            
+            <div class="input-group">
+                <label for="password_confirm">비밀번호 확인</label>
+                <input type="password" id="password_confirm" name="password_confirm" placeholder="비밀번호 확인" required>
+                <span id="confirmPasswordError" style="color: red; display: none;">비밀번호가 일치하지 않습니다.</span>
+            </div>
+            
+            <div class="input-group">
+                <label for="phone_number">전화번호</label>
+                <input type="tel" id="phone_number" name="phone_number" placeholder="010-1234-5678" required>
+                <span id="phoneError" style="color: red; display: none;">전화번호 형식이 올바르지 않습니다.</span>
+            </div>
+        
+            <div class="input-group">
+                <label for="postal_code">우편번호</label>
+                <div class="check_container">
+                    <input type="text" id="postal_code" name="postal_code" placeholder="우편번호" readonly>
+                    <button type="button" onclick="searchAddress()">찾기</button>
+                </div>
+            </div>
+        
+            <div class="input-group">
+                <label for="address">주소</label>
+                <input type="text" id="address" name="address" placeholder="주소 입력" readonly required>
+            </div>
+        
+            <div class="input-group">
+                <label for="add_detail">상세 주소</label>
+                <input type="text" id="add_detail" name="add_detail" placeholder="상세 주소 입력" required>
+            </div>
+        
+            <div class="input-group">
+                <label for="email">이메일</label>
+                <input type="email" id="email" name="email" value="{{ email }}" readonly>
+            </div>
+
+            <button type="button" id="signupButton" style="display: block; margin: 0 auto;">가입</button>
+        </form>
+    </div>
+    <script src="/static/js/member/member_signup.js"></script>
+</body>
+</html>
