@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공지사항 상세</title>
+    <link rel="stylesheet" href="/static/css/notices/notice_detail.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <script src="/static/js/notices/notice_detail.js"></script>
+    <script>
+        const togglebtn = document.querySelector('.navbar_togglebtn');
+        const menu = document.querySelector('.navbar_menu');
+        const member = document.querySelector('.navbar_member');
+    
+        togglebtn.addEventListener('click', ()=>{
+            menu.classList.toggle('active');
+            member.classList.toggle('active');
+        });
+    </script>
+    <script>
+        // 네비게이션 스크립트
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch("http://58.127.241.84:60119/api/member/status")
+                .then(response => response.json())
+                .then(data => {
+                    const navbarMember = document.getElementById("navbar_member");
+                    navbarMember.innerHTML = "";  // 기존 내용 초기화
+
+                    if (data.is_authenticated) {
+                        if (data.is_admin) {
+                            // ✅ 관리자 계정
+                            navbarMember.innerHTML = `
+                                <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
+                                <li class="navbar_login"><a href="http://58.127.241.84:61080/admin/admin_man.html">회원정보</a></li>
+                            `;
+                        } else {
+                            // ✅ 일반 로그인 사용자
+                            navbarMember.innerHTML = `
+                                <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
+                                <li class="navbar_login"><a href="http://58.127.241.84:61080/mypage/mypage.html">마이페이지</a></li>
+                            `;
+                        }
+                    } else {
+                        // ✅ 비로그인 상태
+                        navbarMember.innerHTML = `
+                            <li class="navbar_signup"><a href="http://58.127.241.84:61080/member/member_signup.html">회원가입</a></li>
+                            <li class="navbar_login"><a href="http://58.127.241.84:61080/member/member_login.html">로그인</a></li>
+                        `;
+                    }
+                })
+                .catch(error => console.error("사용자 상태 확인 중 오류 발생:", error));
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const noticeId = urlParams.get("notice_id");
+    
+            if (!noticeId) {
+                alert("잘못된 접근입니다.");
+                window.location.href = "http://58.127.241.84:61080/notices/notices.html";
+                return;
+            }
+    
+            fetch(`http://58.127.241.84:60119/api/notices/detail/${noticeId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        window.location.href = "http://58.127.241.84:61080/notices/notices.html";
+                        return;
+                    }
+    
+                    document.getElementById("notice_detail_title").textContent = data.title;
+                    document.getElementById("notice_detail_date").textContent = data.created_at;
+                    document.getElementById("notice_detail_content").textContent = data.content;
+    
+                    if (data.file_url) {
+                        const fileLink = document.createElement("a");
+                        fileLink.href = data.file_url;
+                        fileLink.download = "";
+                        fileLink.innerHTML = '<img src="http://58.127.241.84:61080/static/images/file.png" width="20" height="15">';
+                        document.getElementById("notice_file").appendChild(fileLink);
+                    }
+                })
+                .catch(error => {
+                    console.error("공지사항 상세 정보를 불러오는 중 오류 발생:", error);
+                    alert("공지사항을 불러오는 중 오류가 발생했습니다.");
+                });
+    
+            // ✅ 로그인한 사용자 정보 확인 (관리자 여부)
+            fetch("http://58.127.241.84:60119/api/member/status")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.is_authenticated && data.is_admin) {
+                        document.getElementById("admin_buttons").style.display = "block";
+                    }
+                })
+                .catch(error => console.error("관리자 여부 확인 중 오류 발생:", error));
+        });
+    </script>    
+</head>
+
+<!--네비게이션 메뉴 바-->
+<body>
+    <nav class="navbar">
+        <div class="navbar_logo">
+            <a href="http://58.127.241.84:61080/main/main.html">
+                <img src="/static/images/rootair.jpg"/>
+            </a>
+        </div>
+        <ul class="navbar_menu">
+            <li><a href="http://58.127.241.84:61080/main/main.html">예약</a></li>
+            <li><a href="http://58.127.241.84:61080/notices/notices.html">공지사항</a></li>
+            <li><a href="http://58.127.241.84:61080/qna/qna.html">문의사항</a></li>            
+        </ul>
+        <ul class="navbar_member" id="navbar_member">
+            <!-- 로그인 상태에 따라 동적 업데이트 -->
+        </ul>
+        <img class="navbar_togglebtn" src="/static/images/topbar.jpg" width="24" height="18"/>
+    </nav>
+</body>
+
+<body>
+    <div class="notice_detail_container">
+        <h2>공지사항</h2>
+        <div class="notice_detail_wrap">
+            <h3 id="notice_detail_title"></h3>
+            <div class="dateandfile">
+                <p class="notice_detail_meta">
+                    <span class="notice_detail_date" id="notice_detail_date"></span>
+                    <a id="download_link" style="display:none;" download>
+                        <img src="http://58.127.241.84:61080/static/images/file.png" width="20" height="15">
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <div class="notice_detail_content">
+            <p id="notice_detail_content"></p>
+        </div>
+
+        <div class="detail_button">
+            <div class="detail_edit_button" id="editButtonContainer" style="display:none;">
+                <button id="editBtn" class="edit_button">수정</button>
+            </div>            
+            <div class="detail_del_button" id="deleteButtonContainer" style="display:none;">
+                <button id="deleteBtn" class="btn delete-btn">삭제</button>
+            </div>
+            <div class="detail_back_button">
+                <button onclick="goBack()" class="back_button">목록보기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const noticeId = urlParams.get("notice_id");
+            const apiUrl = `http://58.127.241.84:60119/api/notices/detail/${noticeId}`;
+            
+            if (!noticeId) {
+                alert("공지사항 ID가 없습니다.");
+                return;
+            }
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert("공지사항을 찾을 수 없습니다.");
+                        window.location.href = "http://58.127.241.84:61080/notices/notices.html";
+                        return;
+                    }
+
+                    document.getElementById("notice_detail_title").textContent = data.title;
+                    document.getElementById("notice_detail_date").textContent = data.created_at;
+                    document.getElementById("notice_detail_content").textContent = data.content;
+
+                    if (data.file_url) {
+                        const downloadLink = document.getElementById("download_link");
+                        downloadLink.href = data.file_url;
+                        downloadLink.style.display = "inline";
+                    }
+
+                    // 관리자 계정 여부 확인 (세션 상태 체크)
+                    fetch("http://58.127.241.84:60119/api/member/status")
+                        .then(response => response.json())
+                        .then(userData => {
+                            if (userData.is_authenticated && userData.is_admin) {
+                                document.getElementById("editButtonContainer").style.display = "block";
+                                document.getElementById("deleteButtonContainer").style.display = "block";
+                                document.getElementById("editBtn").setAttribute("data-notice-id", noticeId);
+                                document.getElementById("deleteBtn").setAttribute("data-notice-id", noticeId);
+                            }
+                        })
+                        .catch(error => console.error("세션 정보 불러오기 오류:", error));
+                })
+                .catch(error => console.error("공지사항 불러오기 오류:", error));
+        });
+
+        function goBack() {
+            window.location.href = "http://58.127.241.84:61080/notices/notices.html";
+        }
+    </script>
+</body>
+
+</html>

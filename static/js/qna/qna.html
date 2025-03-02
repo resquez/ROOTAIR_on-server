@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문의사항</title>
+    <link rel="stylesheet" href="/static/css/qna/qna.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script> 
+    <script>
+        // 네비게이션 스크립트
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch("http://58.127.241.84:60119/api/member/status")
+            .then(response => response.json())
+            .then(data => {
+                const navbarMember = document.getElementById("navbar_member");
+                navbarMember.innerHTML = "";  // 기존 내용 초기화
+
+                if (data.is_authenticated) {
+                    if (data.is_admin) {
+                        // ✅ 관리자 계정
+		                        navbarMember.innerHTML = `
+                            <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
+                            <li class="navbar_login"><a href="http://58.127.241.84:61080/admin/admin_man.html">회원정보</a></li>
+                        `;
+                    } else {
+                        // ✅ 일반 로그인 사용자
+                        navbarMember.innerHTML = `
+                            <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
+                            <li class="navbar_login"><a href="http://58.127.241.84:61080/mypage/mypage.html">마이페이지</a></li>
+                        `;
+                    }
+                } else {
+                    // ✅ 비로그인 상태
+                    navbarMember.innerHTML = `
+                        <li class="navbar_signup"><a href="http://58.127.241.84:61080/member/member_signup.html">회원가입</a></li>
+                        <li class="navbar_login"><a href="http://58.127.241.84:61080/member/member_login.html">로그인</a></li>
+                    `;
+                }
+            })
+            .catch(error => console.error("사용자 상태 확인 중 오류 발생:", error));
+    });
+    </script>
+</head>
+<!--네비게이션 메뉴 바-->
+<body>
+    <nav class="navbar">
+        <div class="navbar_logo">
+            <a href="http://58.127.241.84:61080/main/main.html">
+                <img src="/static/images/rootair.jpg"/>
+            </a>
+        </div>
+        <ul class="navbar_menu">
+            <li><a href="http://58.127.241.84:61080/main/main.html">예약</a></li>
+            <li><a href="http://58.127.241.84:61080/notices/notices.html">공지사항</a></li>
+            <li><a href="http://58.127.241.84:61080/qna/qna.html">문의사항</a></li>            
+        </ul>
+        <ul class="navbar_member" id="navbar_member">
+            <!-- 로그인 상태에 따라 동적 업데이트 -->
+        </ul>
+        <img class="navbar_togglebtn" src="/static/images/topbar.jpg" width="24" height="18"/>
+    </nav>
+</body>
+
+<!-- 배경 이미지 -->
+<div class="image_qna">
+    <img src="/static/images/qna.jpg">
+</div>
+
+<!-- 문의사항 & 나의 문의 탭 -->
+<div class="tab-menu">
+    <button class="tab-button active" id="all-qna-tab" onclick="showTab('all-questions')">문의사항</button>
+    <button class="tab-button" id="my-qna-tab" onclick="showTab('my-questions')">나의 문의</button>
+</div>
+
+
+
+<div class="qna_container">
+    <!-- ✅ 문의사항 목록 -->
+    <div id="all-questions" class="tab-content active">
+        <h2>문의사항</h2>
+        <table class="question-table">
+            <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>작성일</th>
+                </tr>
+            </thead>
+            <tbody id="question-list">
+                <!-- ✅ JS에서 데이터 로드 -->
+            </tbody>
+        </table>
+        <div class="pagination" id="pagination">
+           
+        </div>
+    </div>
+
+    <!-- ✅ 나의 문의 목록 -->
+    <div id="my-questions" class="tab-content">
+        <h2>나의 문의</h2>
+        <table class="question-table">
+            <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>작성일</th>
+                </tr>
+            </thead>
+            <tbody id="my-question-list">
+          
+                <!-- ✅ JS에서 데이터 로드 -->
+            </tbody>
+        </table>
+        <div class="pagination" id="my-pagination"></div>
+    </div>
+
+    <div class="qna_button_container">
+        <button id="qnawrite">문의 등록</button>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                document.getElementById("qnawrite").addEventListener("click", function () {
+                    window.location.href = "http://58.127.241.84:61080/qna/qna_create.html";
+                });
+            });
+        </script>
+    </div>
+</div>
+<script src="/static/js/qna/qna.js"></script>
+</body>
+</html>
