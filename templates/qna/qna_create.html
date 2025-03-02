@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문의 작성</title>
+    <link rel="stylesheet" href="/static/css/qna/qna_create.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <script src="/static/js/qna/qna_create.js"></script>
+
+    <script>
+        // 네비게이션 스크립트
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch("http://58.127.241.84:60119/api/member/status")
+            .then(response => response.json())
+            .then(data => {
+                const navbarMember = document.getElementById("navbar_member");
+                navbarMember.innerHTML = "";  // 기존 내용 초기화
+
+                if (data.is_authenticated) {
+                    if (data.is_admin) {
+                        // ✅ 관리자 계정
+		                        navbarMember.innerHTML = `
+                            <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
+                            <li class="navbar_login"><a href="http://58.127.241.84:61080/admin/admin_man.html">회원정보</a></li>
+                        `;
+                    } else {
+                        // ✅ 일반 로그인 사용자
+                        navbarMember.innerHTML = `
+                            <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
+                            <li class="navbar_login"><a href="http://58.127.241.84:61080/mypage/mypage.html">마이페이지</a></li>
+                        `;
+                    }
+                } else {
+                    // ✅ 비로그인 상태
+                    navbarMember.innerHTML = `
+                        <li class="navbar_signup"><a href="http://58.127.241.84:61080/member/member_signup.html">회원가입</a></li>
+                        <li class="navbar_login"><a href="http://58.127.241.84:61080/member/member_login.html">로그인</a></li>
+                    `;
+                }
+            })
+            .catch(error => console.error("사용자 상태 확인 중 오류 발생:", error));
+    });
+    </script>
+
+</head>
+
+<!--네비게이션 메뉴 바-->
+<body>
+    <nav class="navbar">
+        <div class="navbar_logo">
+            <a href="http://58.127.241.84:61080/main/main.html">
+                <img src="/static/images/rootair.jpg"/>
+            </a>
+        </div>
+        <ul class="navbar_menu">
+            <li><a href="http://58.127.241.84:61080/main/main.html">예약</a></li>
+            <li><a href="http://58.127.241.84:61080/notices/notices.html">공지사항</a></li>
+            <li><a href="http://58.127.241.84:61080/qna/qna.html">문의사항</a></li>            
+        </ul>
+        <ul class="navbar_member" id="navbar_member">
+            <!-- 로그인 상태에 따라 동적 업데이트 -->
+        </ul>
+        <img class="navbar_togglebtn" src="/static/images/topbar.jpg" width="24" height="18"/>
+    </nav>
+</body>
+
+<body>
+    <div class="register_container">
+        <h2>문의사항 등록</h2>
+
+        <form id="qnaForm" action="{{ url_for('qna.qna_create_api') }}" method="POST" enctype="multipart/form-data">
+            <label for="title">제목</label>
+            <input type="text" id="title" name="title" placeholder="제목을 입력하세요">
+
+            <label for="file">첨부 파일</label>
+            <input type="file" id="file" name="file">
+
+            <label for="content">내용</label>
+            <textarea id="content" name="content" placeholder="내용을 입력하세요"></textarea>
+
+            <div class="checkbox_container">
+                <input type="hidden" name="isSecret" value="false">
+                <input type="checkbox" id="private" name="isSecret">
+                <label for="private">비밀글</label>
+            </div>
+
+            <button type="submit" id="submit_btn">문의 등록</button>
+     
+        </form>
+    </div>
+    <script src="/static/js/qna/qna_create.js"></script>
+</body>
+</html>

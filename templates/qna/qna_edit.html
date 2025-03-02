@@ -1,0 +1,169 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문의 수정</title>
+    <link rel="stylesheet" href="/static/css/qna/qna_edit.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <script src="/static/js/qna/qna_edit.js"></script>
+
+    <script>
+        // 네비게이션 스크립트
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch("http://58.127.241.84:60119/api/member/status")
+            .then(response => response.json())
+            .then(data => {
+                const navbarMember = document.getElementById("navbar_member");
+                navbarMember.innerHTML = "";  // 기존 내용 초기화
+
+                if (data.is_authenticated) {
+                    if (data.is_admin) {
+                        // ✅ 관리자 계정
+		                        navbarMember.innerHTML = `
+                            <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
+                            <li class="navbar_login"><a href="http://58.127.241.84:61080/admin/admin_man.html">회원정보</a></li>
+                        `;
+                    } else {
+                        // ✅ 일반 로그인 사용자
+                        navbarMember.innerHTML = `
+                            <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
+                            <li class="navbar_login"><a href="http://58.127.241.84:61080/mypage/mypage.html">마이페이지</a></li>
+                        `;
+                    }
+                } else {
+                    // ✅ 비로그인 상태
+                    navbarMember.innerHTML = `
+                        <li class="navbar_signup"><a href="http://58.127.241.84:61080/member/member_signup.html">회원가입</a></li>
+                        <li class="navbar_login"><a href="http://58.127.241.84:61080/member/member_login.html">로그인</a></li>
+                    `;
+                }
+            })
+            .catch(error => console.error("사용자 상태 확인 중 오류 발생:", error));
+    });
+    </script>
+</head>
+
+<!--네비게이션 메뉴 바-->
+<body>
+    <nav class="navbar">
+        <div class="navbar_logo">
+            <a href="http://58.127.241.84:61080/main/main.html">
+                <img src="/static/images/rootair.jpg"/>
+            </a>
+        </div>
+        <ul class="navbar_menu">
+            <li><a href="http://58.127.241.84:61080/main/main.html">예약</a></li>
+            <li><a href="http://58.127.241.84:61080/notices/notices.html">공지사항</a></li>
+            <li><a href="http://58.127.241.84:61080/qna/qna.html">문의사항</a></li>            
+        </ul>
+        <ul class="navbar_member" id="navbar_member">
+            <!-- 로그인 상태에 따라 동적 업데이트 -->
+        </ul>
+        <img class="navbar_togglebtn" src="/static/images/topbar.jpg" width="24" height="18"/>
+    </nav>
+</body>
+
+<body>
+    <div class="register_container_page">
+        <div class="register_container">
+            <h2>문의사항 수정</h2>
+
+            <form id="qnaForm" data-qna-id="{{ qna.qna_id }}" action="{{ url_for('qna.qna_edit_api',qna_id=qna.qna_id) }}" method="POST" enctype="multipart/form-data">
+                <label for="title">제목</label>
+                <input type="text" id="title" name="title" value="{{ qna.title }}">
+
+                <label for="file">첨부 파일</label>
+                <div class="file-upload-container">
+                    <!-- 숨겨진 파일 업로드 input -->
+                    <input type="file" id="file" name="file" style="display: none;">
+                
+                   
+                    <!-- 기존 파일 정보를 유지하는 hidden input -->
+                    {% if qna.file %}
+                        <input type="file" id="fileUploadBtn" name="existing_file" value="{{ qna.file }}">
+                    {% endif %}
+                
+                    
+                </div>
+
+
+                <label for="content">내용</label>
+                <textarea class="editcontent" id="content" name="content">{{ qna.content }}</textarea>
+
+            <div class="btnandcheck">
+                <div class="checkbox_container">
+                    <input type="checkbox" id="private" name="isPrivate" {% if qna.is_secret %}checked{% endif %}>
+                    <label for="private">비밀글</label>
+                </div>
+                <div class="btaline">
+                    <button type="submit" id="submit_btn">문의 등록</button>
+                </div>
+            </div>
+            <div class="defaultfile_box">
+                <!-- 선택된 파일명 표시 -->
+                <label for="file">첨부되어있는파일</label>
+                <div class="defaultfile">
+                    
+                    <span id="fileNameDisplay">
+                        {% if qna.file %}
+                            <span id="existingFile">{{ qna.file.split('/')[-1] }}</span>
+                            <button type="button" id="removeFile">삭제</button>
+                        {% else %}
+                            선택된 파일 없음
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script src="{{ url_for('static', filename='js/qna/qna_edit.js') }}"></script>
+</body>
+<script>
+    document.getElementById("fileUploadBtn").addEventListener("click", function() {
+        document.getElementById("file").click(); // 파일 업로드 창 열기
+    });
+
+    document.getElementById("file").addEventListener("change", function(event) {
+        let fileInput = event.target;
+        let fileNameDisplay = document.getElementById("fileNameDisplay");
+
+        if (fileInput.files.length > 0) {
+            fileNameDisplay.innerHTML = fileInput.files[0].name +
+                ' <button type="button" id="removeFile">삭제</button>';
+            
+            // 기존 파일 정보 제거
+            let existingFileInput = document.getElementById("existingFileInput");
+            if (existingFileInput) {
+                existingFileInput.remove();
+            }
+
+            addRemoveEvent();
+        }
+    });
+
+    function addRemoveEvent() {
+        let removeBtn = document.getElementById("removeFile");
+        if (removeBtn) {
+            removeBtn.addEventListener("click", function() {
+                document.getElementById("file").value = ""; // 파일 선택 초기화
+                document.getElementById("fileNameDisplay").textContent = "선택된 파일 없음";
+
+                // 기존 파일 정보를 유지하기 위해 hidden input 다시 추가
+                let existingFileInput = document.getElementById("existingFileInput");
+                if (!existingFileInput && "{{ qna.file }}") {
+                    let hiddenInput = document.createElement("input");
+                    hiddenInput.type = "hidden";
+                    hiddenInput.id = "existingFileInput";
+                    hiddenInput.name = "existing_file";
+                    hiddenInput.value = "{{ qna.file }}";
+                    document.getElementById("qnaForm").appendChild(hiddenInput);
+                }
+            });
+        }
+    }
+
+    addRemoveEvent(); // 기존 파일이 있을 경우 삭제 버튼 이벤트 추가
+</script>
+</html>

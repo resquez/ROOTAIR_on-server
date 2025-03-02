@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문의 상세</title>
+    
+    <!-- Flask 방식으로 CSS 로드 -->
+    <link rel="stylesheet" href="/static/css/qna/qna_detail.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <script src="/static/js/qna/qna_detail.js"></script>
+
+    <script>
+        // 네비게이션 스크립트
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch("http://58.127.241.84:60119/api/member/status")
+            .then(response => response.json())
+            .then(data => {
+                const navbarMember = document.getElementById("navbar_member");
+                navbarMember.innerHTML = "";  // 기존 내용 초기화
+
+                if (data.is_authenticated) {
+                    if (data.is_admin) {
+                        // ✅ 관리자 계정
+		                        navbarMember.innerHTML = `
+                            <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
+                            <li class="navbar_login"><a href="http://58.127.241.84:61080/admin/admin_man.html">회원정보</a></li>
+                        `;
+                    } else {
+                        // ✅ 일반 로그인 사용자
+                        navbarMember.innerHTML = `
+                            <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
+                            <li class="navbar_login"><a href="http://58.127.241.84:61080/mypage/mypage.html">마이페이지</a></li>
+                        `;
+                    }
+                } else {
+                    // ✅ 비로그인 상태
+                    navbarMember.innerHTML = `
+                        <li class="navbar_signup"><a href="http://58.127.241.84:61080/member/member_signup.html">회원가입</a></li>
+                        <li class="navbar_login"><a href="http://58.127.241.84:61080/member/member_login.html">로그인</a></li>
+                    `;
+                }
+            })
+            .catch(error => console.error("사용자 상태 확인 중 오류 발생:", error));
+    });
+    </script>
+</head>
+
+<!--네비게이션 메뉴 바-->
+<body>
+    <nav class="navbar">
+        <div class="navbar_logo">
+            <a href="http://58.127.241.84:61080/main/main.html">
+                <img src="/static/images/rootair.jpg"/>
+            </a>
+        </div>
+        <ul class="navbar_menu">
+            <li><a href="http://58.127.241.84:61080/main/main.html">예약</a></li>
+            <li><a href="http://58.127.241.84:61080/notices/notices.html">공지사항</a></li>
+            <li><a href="http://58.127.241.84:61080/qna/qna.html">문의사항</a></li>            
+        </ul>
+        <ul class="navbar_member" id="navbar_member">
+            <!-- 로그인 상태에 따라 동적 업데이트 -->
+        </ul>
+        <img class="navbar_togglebtn" src="/static/images/topbar.jpg" width="24" height="18"/>
+    </nav>
+</body>
+
+<body>
+    <div class="qna_detail_container">
+        <h2>문의사항</h2>
+        <div class="qna_detail">
+            <div class="qna_detail_wrap">
+                <h3>{{qna.title}}</h3>                
+                </p>
+            </div>
+            <p class="qna_info">
+                작성자: {{ qna.user_id }} | 작성일: {{ qna.created_at.strftime('%Y-%m-%d') }} 
+                {% if qna.file %} | 첨부파일:
+                    <a href="{{ url_for('qna.download_file', filename=qna.file.split('/')[-1]) }}" download>
+                        <img src="{{url_for('static',filename='images/file.png')}}" width="20" height="15"> 
+                    </a>
+                {%else%}
+                    <p>첨부파일 없음</p>
+                {%endif%}
+            </p>
+            <hr>
+            <p>{{ qna.content }}</p>
+            
+        </div>
+
+        <div class="admin_reply">
+            <h4>관리자 답변</h4>
+            {{ qna.comment }}
+            {% if isAdmin %}
+                <div id="admin_reply_container">
+                    <textarea id="admin_reply_input" placeholder="답변을 입력하세요"></textarea>
+                </div>
+            {% endif %} 
+        </div>
+
+        <div class="btn_container">
+            <button id="answerBtn" class="btn answer-btn" hidden>답변 등록</button>
+            {% if current_user.user_id == qna.user_id %}
+                <button id="editBtn" class="btn edit-btn" onclick="location.href='{{ url_for('qna.qna_edit_page', qna_id=qna_id) }}'">수정</button>
+            {% endif %}
+            {% if current_user.user_id == qna.user_id %}
+            <button id="deleteBtn" class="btn delete-btn" data-qna-id="{{ qna.qna_id }}">삭제</button>
+            {% endif %}
+            <button id="backBtn" class="btn back-btn" onclick="location.href='{{ url_for('qna.qna_page')}}'">목록보기</button>
+        </div>
+    </div>
+</body>
+</html>
