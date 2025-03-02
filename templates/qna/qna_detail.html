@@ -71,44 +71,137 @@
         <h2>문의사항</h2>
         <div class="qna_detail">
             <div class="qna_detail_wrap">
-                <h3>{{qna.title}}</h3>                
-                </p>
+                <h3 id="qna_title"></h3>
             </div>
             <p class="qna_info">
-                작성자: {{ qna.user_id }} | 작성일: {{ qna.created_at.strftime('%Y-%m-%d') }} 
-                {% if qna.file %} | 첨부파일:
-                    <a href="{{ url_for('qna.download_file', filename=qna.file.split('/')[-1]) }}" download>
-                        <img src="{{url_for('static',filename='images/file.png')}}" width="20" height="15"> 
+                작성자: <span id="qna_user"></span> | 작성일: <span id="qna_date"></span>
+                <span id="file_section" style="display:none;"> | 첨부파일:
+                    <a id="download_link" download>
+                        <img src="http://58.127.241.84:61080/static/images/file.png" width="20" height="15">
                     </a>
-                {%else%}
-                    <p>첨부파일 없음</p>
-                {%endif%}
+                </span>
             </p>
             <hr>
-            <p>{{ qna.content }}</p>
-            
+            <p id="qna_content"></p>
         </div>
 
         <div class="admin_reply">
             <h4>관리자 답변</h4>
-            {{ qna.comment }}
-            {% if isAdmin %}
-                <div id="admin_reply_container">
-                    <textarea id="admin_reply_input" placeholder="답변을 입력하세요"></textarea>
-                </div>
-            {% endif %} 
+            <p id="qna_comment"></p>
+            <div id="admin_reply_container" style="display:none;">
+                <textarea id="admin_reply_input" placeholder="답변을 입력하세요"></textarea>
+                <button id="answerBtn" class="btn answer-btn">답변 등록</button>
+            </div>
         </div>
 
         <div class="btn_container">
-            <button id="answerBtn" class="btn answer-btn" hidden>답변 등록</button>
-            {% if current_user.user_id == qna.user_id %}
-                <button id="editBtn" class="btn edit-btn" onclick="location.href='{{ url_for('qna.qna_edit_page', qna_id=qna_id) }}'">수정</button>
-            {% endif %}
-            {% if current_user.user_id == qna.user_id %}
-            <button id="deleteBtn" class="btn delete-btn" data-qna-id="{{ qna.qna_id }}">삭제</button>
-            {% endif %}
-            <button id="backBtn" class="btn back-btn" onclick="location.href='{{ url_for('qna.qna_page')}}'">목록보기</button>
+            <button id="editBtn" class="btn edit-btn" style="display:none;">수정</button>
+            <button id="deleteBtn" class="btn delete-btn" style="display:none;">삭제</button>
+            <button id="backBtn" class="btn back-btn">목록보기</button>
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const qnaId = urlParams.get("qna_id");
+
+            if (!qnaId) {
+                alert("문의사항 ID가 없습니다.");
+                window.location.href = "http://58.127.241.84:61080/qna/qna.html";
+                return;
+            }
+
+            fetch(`http://58.127.241.84:60119/api/qna/detail/${qnaId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert("문의사항을 찾을 수 없습니다.");
+                        window.location.href = "http://58.127.241.84:61080/qna/qna.html";
+                        return;
+                    }
+
+                    document.getElementById("qna_title").textContent = data.title;
+                    document.getElementById("qna_user").textContent = data.user_id;
+                    document.getElementById("qna_date").textContent = data.created_at;
+                    document.getElementById("qna_content").textContent = data.content;
+                    document.getElementById("qna_comment").textContent = data.comment || "관리자 답변이 없습니다.";
+
+                    if (data.file_url) {
+                        const fileSection = document.getElementById("file_section");
+                        document.getElementById("download_link").href = data.file_url;
+                        fileSection.style.display = "inline";
+                    }
+
+                    // ✅ 로그인한 사용자 정보 가져오기
+                    fetch("http://58.127.241.84:60119/api/member/status")
+                        .then(response => response.json())
+                        .then(userData => {
+                            if (!userData.is_authenticated) return;
+
+                            // ✅ 본인이 작성한 글이면 수정/삭제 버튼 표시
+                            if (userData.user_id === data.user_id) {
+                                const editBtn = document.getElementById("editBtn");
+                                const deleteBtn = document.getElementById("deleteBtn");
+
+                                editBtn.style.display = "inline";
+                                deleteBtn.style.display = "inline";
+
+                                editBtn.addEventListener("click", function () {
+                                    window.location.href = `http://58.127.241.84:61080/qna/qna_edit.html?qna_id=${qnaId}`;
+                                });
+
+                                deleteBtn.addEventListener("click", function () {
+                                    if (confirm("정말 삭제하시겠습니까?")) {
+                                        fetch(`http://58.127.241.84:60119/api/qna/delete/${qnaId}`, {
+                                            method: "DELETE",
+                                            credentials: "include"
+                                        })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            alert("문의사항이 삭제되었습니다.");
+                                            window.location.href = "http://58.127.241.84:61080/qna/qna.html";
+                                        })
+                                        .catch(error => console.error("삭제 오류:", error));
+                                    }
+                                });
+                            }
+
+                            // ✅ 관리자면 답변 입력 가능
+                            if (userData.is_admin) {
+                                document.getElementById("admin_reply_container").style.display = "block";
+                                document.getElementById("answerBtn").addEventListener("click", function () {
+                                    const replyContent = document.getElementById("admin_reply_input").value;
+                                    if (!replyContent.trim()) {
+                                        alert("답변을 입력하세요.");
+                                        return;
+                                    }
+
+                                    fetch(`http://58.127.241.84:60119/api/qna/comment/${qnaId}`, {
+                                        method: "POST",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({ comment: replyContent }),
+                                        credentials: "include"
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        alert("답변이 등록되었습니다.");
+                                        window.location.reload();
+                                    })
+                                    .catch(error => console.error("답변 등록 오류:", error));
+                                });
+                            }
+                        })
+                        .catch(error => console.error("세션 정보 오류:", error));
+                })
+                .catch(error => console.error("문의사항 불러오기 오류:", error));
+
+            // ✅ 목록보기 버튼 클릭 이벤트
+            document.getElementById("backBtn").addEventListener("click", function () {
+                window.location.href = "http://58.127.241.84:61080/qna/qna.html";
+            });
+        });
+    </script>
 </body>
+
 </html>

@@ -70,56 +70,143 @@
         <div class="register_container">
             <h2>문의사항 수정</h2>
 
-            <form id="qnaForm" data-qna-id="{{ qna.qna_id }}" action="{{ url_for('qna.qna_edit_api',qna_id=qna.qna_id) }}" method="POST" enctype="multipart/form-data">
+            <form id="qnaForm" enctype="multipart/form-data">
                 <label for="title">제목</label>
-                <input type="text" id="title" name="title" value="{{ qna.title }}">
+                <input type="text" id="title" name="title">
 
                 <label for="file">첨부 파일</label>
                 <div class="file-upload-container">
                     <!-- 숨겨진 파일 업로드 input -->
                     <input type="file" id="file" name="file" style="display: none;">
-                
-                   
-                    <!-- 기존 파일 정보를 유지하는 hidden input -->
-                    {% if qna.file %}
-                        <input type="file" id="fileUploadBtn" name="existing_file" value="{{ qna.file }}">
-                    {% endif %}
-                
-                    
+                    <button type="button" id="fileUploadBtn">파일 선택</button>
                 </div>
-
 
                 <label for="content">내용</label>
-                <textarea class="editcontent" id="content" name="content">{{ qna.content }}</textarea>
+                <textarea class="editcontent" id="content" name="content"></textarea>
 
-            <div class="btnandcheck">
-                <div class="checkbox_container">
-                    <input type="checkbox" id="private" name="isPrivate" {% if qna.is_secret %}checked{% endif %}>
-                    <label for="private">비밀글</label>
+                <div class="btnandcheck">
+                    <div class="checkbox_container">
+                        <input type="checkbox" id="private" name="isPrivate">
+                        <label for="private">비밀글</label>
+                    </div>
+                    <div class="btaline">
+                        <button type="submit" id="submit_btn">문의 수정</button>
+                    </div>
                 </div>
-                <div class="btaline">
-                    <button type="submit" id="submit_btn">문의 등록</button>
+
+                <div class="defaultfile_box">
+                    <label for="file">첨부되어있는 파일</label>
+                    <div class="defaultfile">
+                        <span id="fileNameDisplay">선택된 파일 없음</span>
+                    </div>
                 </div>
-            </div>
-            <div class="defaultfile_box">
-                <!-- 선택된 파일명 표시 -->
-                <label for="file">첨부되어있는파일</label>
-                <div class="defaultfile">
-                    
-                    <span id="fileNameDisplay">
-                        {% if qna.file %}
-                            <span id="existingFile">{{ qna.file.split('/')[-1] }}</span>
-                            <button type="button" id="removeFile">삭제</button>
-                        {% else %}
-                            선택된 파일 없음
-                        {% endif %}
-                    </span>
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-    <script src="{{ url_for('static', filename='js/qna/qna_edit.js') }}"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const qnaId = urlParams.get("qna_id");
+
+            if (!qnaId) {
+                alert("문의사항 ID가 없습니다.");
+                window.location.href = "http://58.127.241.84:61080/qna/qna.html";
+                return;
+            }
+
+            // ✅ 문의사항 상세 정보 가져오기
+            fetch(`/api/qna/detail/${qnaId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert("문의사항을 찾을 수 없습니다.");
+                        window.location.href = "http://58.127.241.84:61080/qna/qna.html";
+                        return;
+                    }
+
+                    // ✅ 문의사항 데이터 HTML에 적용
+                    document.getElementById("title").value = data.title;
+                    document.getElementById("content").value = data.content;
+                    document.getElementById("private").checked = data.is_secret;
+
+                    // ✅ 파일이 존재할 경우 파일명 표시
+                    if (data.file_url) {
+                        document.getElementById("fileNameDisplay").innerHTML = `
+                            <span id="existingFile">${data.file_url.split('/').pop()}</span>
+                            <button type="button" id="removeFile">삭제</button>
+                        `;
+                        addRemoveEvent();
+                    }
+
+                    // ✅ qna_id를 form 데이터로 저장
+                    document.getElementById("qnaForm").setAttribute("data-qna-id", qnaId);
+                })
+                .catch(error => console.error("문의사항 불러오기 오류:", error));
+
+            // ✅ 기존 파일 업로드 버튼 이벤트 유지
+            document.getElementById("fileUploadBtn").addEventListener("click", function () {
+                document.getElementById("file").click();
+            });
+
+            document.getElementById("file").addEventListener("change", function (event) {
+                let fileInput = event.target;
+                let fileNameDisplay = document.getElementById("fileNameDisplay");
+
+                if (fileInput.files.length > 0) {
+                    fileNameDisplay.innerHTML = fileInput.files[0].name +
+                        ' <button type="button" id="removeFile">삭제</button>';
+                    addRemoveEvent();
+                }
+            });
+
+            function addRemoveEvent() {
+                let removeBtn = document.getElementById("removeFile");
+                if (removeBtn) {
+                    removeBtn.addEventListener("click", function () {
+                        document.getElementById("file").value = "";
+                        document.getElementById("fileNameDisplay").textContent = "선택된 파일 없음";
+                    });
+                }
+            }
+
+            // ✅ 문의사항 수정 요청 API
+            document.getElementById("qnaForm").addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                let formData = new FormData();
+                formData.append("title", document.getElementById("title").value);
+                formData.append("content", document.getElementById("content").value);
+                formData.append("isPrivate", document.getElementById("private").checked ? "true" : "false");
+
+                let fileInput = document.getElementById("file");
+                if (fileInput.files.length > 0) {
+                    formData.append("file", fileInput.files[0]);
+                }
+
+                fetch(`/api/qna/edit/${qnaId}`, {
+                    method: "POST",
+                    body: formData,
+                    credentials: "include"
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                        window.location.href = "http://58.127.241.84:61080/qna/qna.html";
+                    } else {
+                        alert("문의 등록 실패: " + data.error);
+                    }
+                })
+                .catch(error => console.error("에러 발생:", error));
+            });
+        });
+    </script>
+
+    <script src="/static/js/qna/qna_edit.js"></script>
 </body>
+
+
 <script>
     document.getElementById("fileUploadBtn").addEventListener("click", function() {
         document.getElementById("file").click(); // 파일 업로드 창 열기

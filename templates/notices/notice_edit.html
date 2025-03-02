@@ -68,37 +68,30 @@
         <div class="register_container">
             <h2>공지사항 수정</h2>
 
-            <form id="noticeForm" data-notice-id="{{ notice.notice_id }}" action="{{ url_for('notices.notice_edit_api', notice_id=notice.notice_id) }}" method="POST" enctype="multipart/form-data">
+            <form id="noticeForm" enctype="multipart/form-data">
                 <label for="title">제목</label>
-                <input type="text" id="title" name="title" value="{{ notice.title }}">
+                <input type="text" id="title" name="title">
 
                 <label for="file">첨부 파일</label>
                 <div class="file-upload-container">
                     <input type="file" id="file" name="file" style="display: none;">
-
-                    {% if notice.file %}
-                        <input type="file" id="fileUploadBtn" name="existing_file" value="{{ notice.file }}">
-                    {% endif %}
+                    <input type="file" id="fileUploadBtn" name="existing_file">
                 </div>
 
                 <label for="content">내용</label>
-                <textarea class="editcontent" id="content" name="content">{{ notice.content }}</textarea>
+                <textarea class="editcontent" id="content" name="content"></textarea>
 
                 <div class="btnandcheck">
                     <div class="btaline">
-                        <button type="submit" id="submit_btn">공지 수정</button>
+                        <button type="button" id="submit_btn">공지 수정</button>
                     </div>
                 </div>
                 <div class="defaultfile_box">
                     <label for="file">첨부되어있는 파일</label>
                     <div class="defaultfile">
                         <span id="fileNameDisplay">
-                            {% if notice.file %}
-                                <span id="existingFile">{{ notice.file.split('/')[-1] }}</span>
-                                <button type="button" id="removeFile">삭제</button>
-                            {% else %}
-                                선택된 파일 없음
-                            {% endif %}
+                            <span id="existingFile"></span>
+                            <button type="button" id="removeFile">삭제</button>
                         </span>
                     </div>
                 </div>
@@ -106,6 +99,73 @@
         </div>
     </div>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const noticeId = urlParams.get("notice_id");
+            const apiUrl = `http://58.127.241.84:60119/api/notices/detail/${noticeId}`;
+            const editApiUrl = `http://58.127.241.84:60119/api/notices/edit/${noticeId}`;
+
+            if (!noticeId) {
+                alert("공지사항 ID가 없습니다.");
+                return;
+            }
+
+            // 📌 공지사항 데이터 불러오기
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert("공지사항을 찾을 수 없습니다.");
+                        window.location.href = "http://58.127.241.84:61080/notices/notices.html";
+                        return;
+                    }
+
+                    document.getElementById("title").value = data.title;
+                    document.getElementById("content").value = data.content;
+
+                    if (data.file_url) {
+                        document.getElementById("existingFile").textContent = data.file_url.split('/').pop();
+                    }
+                })
+                .catch(error => console.error("공지사항 불러오기 오류:", error));
+
+            // 📌 공지사항 수정 요청
+            document.getElementById("submit_btn").addEventListener("click", function (event) {
+                event.preventDefault();
+
+                const formData = new FormData();
+                formData.append("title", document.getElementById("title").value);
+                formData.append("content", document.getElementById("content").value);
+
+                const fileInput = document.getElementById("file");
+                if (fileInput.files.length > 0) {
+                    formData.append("file", fileInput.files[0]);
+                }
+
+                fetch(editApiUrl, {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert("공지사항이 수정되었습니다.");
+                        window.location.href = "http://58.127.241.84:61080/notices/notices.html";
+                    } else {
+                        alert("수정 실패: " + (data.error || "알 수 없는 오류"));
+                    }
+                })
+                .catch(error => console.error("공지사항 수정 오류:", error));
+            });
+
+            // 📌 첨부 파일 삭제 기능
+            document.getElementById("removeFile").addEventListener("click", function () {
+                document.getElementById("existingFile").textContent = "선택된 파일 없음";
+                document.getElementById("file").value = "";
+            });
+        });
+    </script>
     <script src="/static/js/notices/notice_edit.js"></script>
 </body>
 <script>

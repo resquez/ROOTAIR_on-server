@@ -69,7 +69,7 @@
     <div class="register_container">
         <h2>문의사항 등록</h2>
 
-        <form id="qnaForm" action="{{ url_for('qna.qna_create_api') }}" method="POST" enctype="multipart/form-data">
+        <form id="qnaForm" enctype="multipart/form-data">
             <label for="title">제목</label>
             <input type="text" id="title" name="title" placeholder="제목을 입력하세요">
 
@@ -86,9 +86,44 @@
             </div>
 
             <button type="submit" id="submit_btn">문의 등록</button>
-     
         </form>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("qnaForm").addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                let formData = new FormData();
+                formData.append("title", document.getElementById("title").value);
+                formData.append("content", document.getElementById("content").value);
+                formData.append("isSecret", document.getElementById("private").checked ? "true" : "false");
+
+                let fileInput = document.getElementById("file");
+                if (fileInput.files.length > 0) {
+                    formData.append("file", fileInput.files[0]);
+                }
+
+                fetch("/api/qna/create", {  // ✅ API 호출 방식으로 변경
+                    method: "POST",
+                    body: formData,
+                    credentials: "include"
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                        window.location.href = "http://58.127.241.84:61080/qna/qna.html";  // ✅ 정확한 경로 지정
+                    } else {
+                        alert("문의 등록 실패: " + data.error);
+                    }
+                })
+                .catch(error => console.error("문의 등록 중 오류 발생:", error));
+            });
+        });
+    </script>
+
     <script src="/static/js/qna/qna_create.js"></script>
 </body>
+
 </html>

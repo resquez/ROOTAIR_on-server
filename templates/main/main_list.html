@@ -82,16 +82,57 @@
         </div>
 
         <!-- 항공권 목록 -->
-        <div class="flight-list">
+        <div class="flight-list" id="flightList">
             <!-- JavaScript에서 항공권 동적 생성 -->
         </div>
 
         <!-- 제출 버튼 -->
         <button class="submit-btn">제출</button>
     </div>
+
     <script>
-        const flights = JSON.parse('{{ results | tojson | safe }}');  // 서버에서 받은 데이터
+        document.addEventListener("DOMContentLoaded", function () {
+            // ✅ 현재 페이지 URL에서 쿼리스트링(검색 조건) 가져오기
+            const urlParams = new URLSearchParams(window.location.search);
+            const departure_airport = urlParams.get("departure_airport");
+            const arrival_airport = urlParams.get("arrival_airport");
+            const departure_date = urlParams.get("departure_date");
+            const seat_class = urlParams.get("seat_class") || "이코노미";
+            const passenger_count = urlParams.get("passenger_count") || 1;
+
+            // ✅ API 요청 URL 생성
+            const apiUrl = `http://58.127.241.84:60119/list?departure_airport=${departure_airport}&arrival_airport=${arrival_airport}&departure_date=${departure_date}&seat_class=${seat_class}&passenger_count=${passenger_count}`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data || data.length === 0) {
+                        document.getElementById("flightList").innerHTML = "<p>항공편이 없습니다.</p>";
+                        return;
+                    }
+
+                    const flightList = document.getElementById("flightList");
+                    data.forEach(flight => {
+                        const flightItem = document.createElement("div");
+                        flightItem.classList.add("flight-item");
+                        flightItem.innerHTML = `
+                            <p>항공편: ${flight.flight_name}</p>
+                            <p>출발지: ${flight.departure_airport}</p>
+                            <p>도착지: ${flight.arrival_airport}</p>
+                            <p>시간: ${flight.departure_time}</p>
+                            <p>좌석 등급: ${flight.seat_class}</p>
+                            <p>가격: ${flight.price}원</p>
+                            <p>남은 좌석: ${flight.passenger_count}</p>
+                        `;
+                        flightList.appendChild(flightItem);
+                    });
+                })
+                .catch(error => console.error("항공편 데이터 로드 오류:", error));
+        });
     </script>
+
     <script src="/static/js/main/main_list.js"></script>
 </body>
 </html>
+
+

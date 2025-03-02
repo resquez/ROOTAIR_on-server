@@ -67,7 +67,7 @@
     <div class="register_container">
         <h2>공지사항 등록</h2>
 
-        <form id="noticeForm" action="{{ url_for('notices.notice_create_api') }}" method="POST" enctype="multipart/form-data">
+        <form id="noticeForm">
             <label for="title">제목</label>
             <input type="text" id="title" name="title" placeholder="제목을 입력하세요">
 
@@ -78,9 +78,45 @@
             <textarea id="content" name="content" placeholder="내용을 입력하세요"></textarea>
 
             <button type="submit" id="submit_btn">공지 등록</button>
-
         </form>
     </div>
-    <script src="/static/js/qna/qna_create.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("noticeForm").addEventListener("submit", function (event) {
+                event.preventDefault(); // 기본 제출 동작 방지
+
+                let formData = new FormData();
+                formData.append("title", document.getElementById("title").value);
+                formData.append("content", document.getElementById("content").value);
+                
+                let fileInput = document.getElementById("file");
+                if (fileInput.files.length > 0) {
+                    formData.append("file", fileInput.files[0]);
+                }
+
+                fetch("http://58.127.241.84:60119/notices/create", {
+                    method: "POST",
+                    body: formData,
+                    credentials: "include" // 쿠키 포함하여 세션 유지
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("공지사항 등록 실패");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert("공지사항이 성공적으로 등록되었습니다!");
+                    window.location.href = "http://58.127.241.84:61080/notices/notices.html"; // 공지사항 목록 페이지로 이동
+                })
+                .catch(error => {
+                    console.error("공지사항 등록 오류:", error);
+                    alert("공지사항 등록 중 오류가 발생했습니다.");
+                });
+            });
+        });
+    </script>
 </body>
+
 </html>

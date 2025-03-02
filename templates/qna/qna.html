@@ -117,7 +117,15 @@
     </div>
 
     <div class="qna_button_container">
-        <button id="qnawrite" onclick="location.href='{{ url_for('qna.qna_create_page') }}'">문의 등록</button>
+        <button id="qnawrite">문의 등록</button>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                document.getElementById("qnawrite").addEventListener("click", function () {
+                    window.location.href = "http://58.127.241.84:61080/qna/qna_create.html";
+                });
+            });
+        </script>
     </div>
 </div>
 <script src="/static/js/qna/qna.js"></script>

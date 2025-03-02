@@ -122,42 +122,31 @@
 </body>
 
 <body>
-    <div class="image_notice">
-        <img src="/static/images/notice.jpg" alt="notice 이미지">
-    </div>
-
     <div class="notice_detail_container">
         <h2>공지사항</h2>
         <div class="notice_detail_wrap">
-            <h3 id="notice_detail_title">{{ notice.title }}</h3>
+            <h3 id="notice_detail_title"></h3>
             <div class="dateandfile">
                 <p class="notice_detail_meta">
-                    <span class="notice_detail_date">{{ notice.created_at.strftime('%Y-%m-%d') }}</span>
-                    {% if notice.file %}
-    <a href="{{ url_for('notices.download_file', filename=notice.file.split('/')[-1]) }}" download>
-    <img src="/static/images/file.png" width="20" height="15">
-    </a>
-{% else %}
-{% endif %}
-
+                    <span class="notice_detail_date" id="notice_detail_date"></span>
+                    <a id="download_link" style="display:none;" download>
+                        <img src="http://58.127.241.84:61080/static/images/file.png" width="20" height="15">
+                    </a>
                 </p>
             </div>
-            
         </div>
 
         <div class="notice_detail_content">
-            <p>{{ notice.content }}</p>
+            <p id="notice_detail_content"></p>
         </div>
 
         <div class="detail_button">
-            {% if session.get('admin', False) %}
-            <div class="detail_edit_button">
-                <button id="editBtn" data-notice-id="{{ notice.notice_id }}" onclick="goedit()" class="edit_button">수정</button>
+            <div class="detail_edit_button" id="editButtonContainer" style="display:none;">
+                <button id="editBtn" class="edit_button">수정</button>
             </div>            
-            <div class="detail_del_button">
-            <button id="deleteBtn" class="btn delete-btn" data-notice-id="{{ notice.notice_id }}">삭제</button>
+            <div class="detail_del_button" id="deleteButtonContainer" style="display:none;">
+                <button id="deleteBtn" class="btn delete-btn">삭제</button>
             </div>
-            {% endif %}
             <div class="detail_back_button">
                 <button onclick="goBack()" class="back_button">목록보기</button>
             </div>
@@ -165,9 +154,55 @@
     </div>
 
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const noticeId = urlParams.get("notice_id");
+            const apiUrl = `http://58.127.241.84:60119/api/notices/detail/${noticeId}`;
+            
+            if (!noticeId) {
+                alert("공지사항 ID가 없습니다.");
+                return;
+            }
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert("공지사항을 찾을 수 없습니다.");
+                        window.location.href = "http://58.127.241.84:61080/notices/notices.html";
+                        return;
+                    }
+
+                    document.getElementById("notice_detail_title").textContent = data.title;
+                    document.getElementById("notice_detail_date").textContent = data.created_at;
+                    document.getElementById("notice_detail_content").textContent = data.content;
+
+                    if (data.file_url) {
+                        const downloadLink = document.getElementById("download_link");
+                        downloadLink.href = data.file_url;
+                        downloadLink.style.display = "inline";
+                    }
+
+                    // 관리자 계정 여부 확인 (세션 상태 체크)
+                    fetch("http://58.127.241.84:60119/api/member/status")
+                        .then(response => response.json())
+                        .then(userData => {
+                            if (userData.is_authenticated && userData.is_admin) {
+                                document.getElementById("editButtonContainer").style.display = "block";
+                                document.getElementById("deleteButtonContainer").style.display = "block";
+                                document.getElementById("editBtn").setAttribute("data-notice-id", noticeId);
+                                document.getElementById("deleteBtn").setAttribute("data-notice-id", noticeId);
+                            }
+                        })
+                        .catch(error => console.error("세션 정보 불러오기 오류:", error));
+                })
+                .catch(error => console.error("공지사항 불러오기 오류:", error));
+        });
+
         function goBack() {
             window.location.href = "http://58.127.241.84:61080/notices/notices.html";
         }
     </script>
 </body>
+
 </html>
