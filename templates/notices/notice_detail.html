@@ -51,13 +51,62 @@
                 .catch(error => console.error("사용자 상태 확인 중 오류 발생:", error));
         });
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const noticeId = urlParams.get("notice_id");
+    
+            if (!noticeId) {
+                alert("잘못된 접근입니다.");
+                window.location.href = "http://58.127.241.84:61080/notices/notices.html";
+                return;
+            }
+    
+            fetch(`http://58.127.241.84:60119/api/notices/detail/${noticeId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        window.location.href = "http://58.127.241.84:61080/notices/notices.html";
+                        return;
+                    }
+    
+                    document.getElementById("notice_detail_title").textContent = data.title;
+                    document.getElementById("notice_detail_date").textContent = data.created_at;
+                    document.getElementById("notice_detail_content").textContent = data.content;
+    
+                    if (data.file_url) {
+                        const fileLink = document.createElement("a");
+                        fileLink.href = data.file_url;
+                        fileLink.download = "";
+                        fileLink.innerHTML = '<img src="http://58.127.241.84:61080/static/images/file.png" width="20" height="15">';
+                        document.getElementById("notice_file").appendChild(fileLink);
+                    }
+                })
+                .catch(error => {
+                    console.error("공지사항 상세 정보를 불러오는 중 오류 발생:", error);
+                    alert("공지사항을 불러오는 중 오류가 발생했습니다.");
+                });
+    
+            // ✅ 로그인한 사용자 정보 확인 (관리자 여부)
+            fetch("http://58.127.241.84:60119/api/member/status")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.is_authenticated && data.is_admin) {
+                        document.getElementById("admin_buttons").style.display = "block";
+                    }
+                })
+                .catch(error => console.error("관리자 여부 확인 중 오류 발생:", error));
+        });
+    </script>    
 </head>
 
+<!--네비게이션 메뉴 바-->
 <body>
     <nav class="navbar">
         <div class="navbar_logo">
             <a href="http://58.127.241.84:61080/main/main.html">
-                <img src="http://58.127.241.84:61080/static/images/rootair.jpg"/>
+                <img src="/static/images/rootair.jpg"/>
             </a>
         </div>
         <ul class="navbar_menu">
@@ -74,7 +123,7 @@
 
 <body>
     <div class="image_notice">
-        <img src="{{ url_for('static', filename='images/notice.jpg') }}" alt="notice 이미지">
+        <img src="/static/images/notice.jpg" alt="notice 이미지">
     </div>
 
     <div class="notice_detail_container">
@@ -86,7 +135,7 @@
                     <span class="notice_detail_date">{{ notice.created_at.strftime('%Y-%m-%d') }}</span>
                     {% if notice.file %}
     <a href="{{ url_for('notices.download_file', filename=notice.file.split('/')[-1]) }}" download>
-    <img src="{{ url_for('static', filename='images/file.png') }}" width="20" height="15">
+    <img src="/static/images/file.png" width="20" height="15">
     </a>
 {% else %}
 {% endif %}
@@ -117,7 +166,7 @@
 
     <script>
         function goBack() {
-            window.location.href = "{{ url_for('notices.notices_page') }}";
+            window.location.href = "http://58.127.241.84:61080/notices/notices.html";
         }
     </script>
 </body>
