@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>결제 정보 제공 동의</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            margin: 50px auto;
+            max-width: 400px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h2 {
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+        .info-box {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .checkbox-container {
+            margin-bottom: 20px;
+        }
+        input[type="checkbox"] {
+            transform: scale(1.2);
+            margin-right: 8px;
+        }
+        button {
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h2>결제 정보 제공 동의</h2>
+
+    <!-- 결제 정보 -->
+    <div class="info-box">
+        총 결제 금액: <span id="display_total_price">{{ total_price }}</span> 원
+<input type="hidden" id="departure_time" name="departure_time" value="{{ departure_time }}">
+<input type="hidden" id="arrival_time" name="arrival_time" value="{{ arrival_time }}">
+
+    </div>
+
+    <!-- 결제 동의 체크박스 -->
+    <div class="checkbox-container">
+        <input type="checkbox" id="consent">
+        <label for="consent">결제 정보 제공에 동의합니다.</label>
+    </div>
+
+    <!-- 결제 정보 전송 폼 -->
+    <form id="paymentInfoForm" action="/pay/process_payment" method="POST">
+<!-- 🔥 더 이상 필요 없는 `Flights` 데이터 제거 -->
+        <input type="hidden" id="flight_id" name="flight_id" value="{{ flight_id }}">
+        <input type="hidden" id="user_id" name="user_id" value="{{ user_id }}">
+        <input type="hidden" id="total_price" name="total_price" value="{{ total_price }}">
+        <input type="hidden" id="passenger_count" name="passenger_count" value="{{ passenger_count }}">
+        <input type="hidden" id="email" name="email" value="{{ email }}">
+        <input type="hidden" id="eng_name" name="eng_name" value="{{ eng_name }}">
+        <input type="hidden" id="final_mileage" name="final_mileage" value="{{ final_mileage }}">
+        <input type="hidden" id="remaining_balance" name="remaining_balance" value="{{ remaining_balance }}">
+        <button type="button" onclick="submitPayment()">결제 진행</button>
+    </form>
+    <script src="/static/js/pay/pay_info.js"></script>
+</body>
+</html>
