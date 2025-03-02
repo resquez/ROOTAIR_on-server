@@ -160,84 +160,16 @@ function createPaginationButtons(totalPages, currentPage) {
 }
 
 
-// ✅ 로그인 상태 확인 API 호출
-function fetchLoginStatus() {
-    console.log("🔥 [DEBUG] 로그인 상태 확인 요청");
+// ✅ 로그인한 사용자 정보 가져오기
+function fetchCurrentUser() {
+    console.log("🔥 [DEBUG] 로그인한 사용자 정보 세션에서 가져오기");
 
-    return fetch("http://58.127.241.84:60119/api/member/status", { // 백엔드의 @member_bp.route("/status") 활용
-        method: "GET",
-        credentials: "include" // ✅ 세션 쿠키 포함
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log("🔥 [DEBUG] 로그인 상태 API 응답:", data);
-
-        if (data.is_authenticated) {
-            console.log("✅ 사용자는 로그인 상태입니다.");
-            sessionStorage.setItem("IS_AUTHENTICATED", "true");
-        } else {
-            console.warn("🚨 사용자는 로그인하지 않았습니다.");
-            sessionStorage.setItem("IS_AUTHENTICATED", "false");
-        }
-
-        return data.is_authenticated;  // ✅ 로그인 여부 반환
-    })
-    .catch(error => {
-        console.error("🚨 로그인 상태 확인 중 오류 발생:", error);
-        return false;
-    });
-}
-
-
-// ✅ 문의사항 상세 페이지 이동 (비밀글 접근 검증 추가)
-async function viewDetail(qna_id, is_secret, writer_id) {
-    console.log("🔥 [DEBUG] 클릭한 게시글 ID:", qna_id);
-    console.log("🔥 [DEBUG] is_secret:", is_secret);
-    console.log("🔥 [DEBUG] writer_id:", writer_id);
-
-    // ✅ 비밀글이라면 로그인 상태 확인
-    if (is_secret === 1) {
-        const isAuthenticated = await fetchLoginStatus();
-
-        if (!isAuthenticated) {
-            console.warn("🚨 [WARNING] 로그인하지 않은 사용자! 로그인 페이지로 이동");
-            alert("비밀글은 로그인한 사용자만 볼 수 있습니다. 로그인 페이지로 이동합니다.");
-            window.location.href = "http://58.127.241.84:61080/member/member_login.html";  // ✅ 로그인 페이지로 이동
-            return;
-        }
-
-        // ✅ 로그인했지만 작성자가 아니라면 접근 차단
-        if (String(writer_id) !== String(CURRENT_USER_ID)) {
-            console.warn("🚨 [WARNING] 작성자가 아님! 접근 차단됨.");
-            alert("비밀글은 작성자만 볼 수 있습니다.");
-            return;
-        }
-    }
-
-    // ✅ 비밀글이 아니거나, 작성자라면 정상적으로 상세 페이지 이동
-    window.location.href = `http://58.127.241.84:61080/qna/qna_detail.html?qna_id=${qna_id}`;
-}
-
-//console.log("🔥 [DEBUG] writer_id:", writer_id, "(타입:", typeof writer_id, ")");
-console.log("🔥 [DEBUG] CURRENT_USER_ID:", CURRENT_USER_ID, "(타입:", typeof CURRENT_USER_ID, ")");
-
-// ✅ 로그인한 사용자 정보 가져오기 (로그인 상태 API 활용)
-async function fetchCurrentUser() {
-    console.log("🔥 [DEBUG] 로그인한 사용자 정보 가져오기");
-
-    const isAuthenticated = await fetchLoginStatus();
-
-    if (!isAuthenticated) {
-        console.warn("🚨 [WARNING] 로그인한 사용자 없음. 기본 상태 유지");
-        CURRENT_USER_ID = null;
-        return;
-    }
-
-    fetch('http://58.127.241.84:60119/api/member/status')  // ✅ 실제 사용자 정보를 가져오는 API
+    fetch('http://58.127.241.84:60119/api/qna/list')  // ✅ qna_api() 호출하면 user_id 확인 가능
         .then(response => response.json())
         .then(data => {
             console.log("🔥 [DEBUG] API 응답:", data);
 
+            // ✅ 항상 API에서 `current_user_id`를 가져와서 업데이트
             if (data.current_user_id) {
                 CURRENT_USER_ID = data.current_user_id;
                 sessionStorage.setItem('CURRENT_USER_ID', CURRENT_USER_ID);
@@ -246,14 +178,33 @@ async function fetchCurrentUser() {
             }
 
             console.log("🔥 [DEBUG] 로그인한 사용자 ID:", CURRENT_USER_ID);
-            fetchInquiryList(1);  // ✅ 전체 문의 목록 불러오기
+            fetchInquiryList(1);  // 전체 문의 목록 불러오기
         })
         .catch(error => console.error("🚨 사용자 정보를 불러오는 중 오류 발생:", error));
 }
 
+// ✅ 문의사항 상세 페이지 이동
+function viewDetail(qna_id, is_secret, writer_id) {
+    console.log("🔥 [DEBUG] 클릭한 게시글 ID:", qna_id);
+    console.log("🔥 [DEBUG] is_secret:", is_secret);
+    console.log("🔥 [DEBUG] writer_id:", writer_id);
+    console.log("🔥 [DEBUG] CURRENT_USER_ID:", CURRENT_USER_ID);
+
+    if (is_secret === 1 && String(writer_id) !== String(CURRENT_USER_ID)) {
+        console.log("🚨 비밀글 접근 차단!");
+        alert("비밀글은 작성자만 볼 수 있습니다.");
+        return;
+    }
+    window.location.href = `/qna/${qna_id}`;
+}
+//console.log("🔥 [DEBUG] writer_id:", writer_id, "(타입:", typeof writer_id, ")");
+console.log("🔥 [DEBUG] CURRENT_USER_ID:", CURRENT_USER_ID, "(타입:", typeof CURRENT_USER_ID, ")");
+
+
 // ✅ 페이지 로드 시 실행
-document.addEventListener("DOMContentLoaded", async () => {
-    await fetchCurrentUser(); // ✅ 로그인 상태 확인 후 사용자 ID 저장
-    fetchInquiryList(1); // ✅ 전체 문의 목록 불러오기
+document.addEventListener("DOMContentLoaded", () => {
+    fetchCurrentUser();
+    fetchInquiryList(1);
     console.log("🔥 [DEBUG] document.getElementById('question-list'):", document.getElementById("question-list"));
 });
+
