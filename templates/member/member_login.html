@@ -59,7 +59,7 @@
     <nav class="navbar">
         <div class="navbar_logo">
             <a href="http://58.127.241.84:61080/main/main.html">
-                <img src="0/static/images/rootair.jpg"/>
+                <img src="/static/images/rootair.jpg"/>
             </a>
         </div>
         <ul class="navbar_menu">
@@ -81,7 +81,7 @@
         <div class="login-page">
             <!-- 로그인 폼 -->
             <div class="login-input">
-                <form method="post" action="{{ url_for('member.login') }}" id="login-form">
+                <form id="login-form">
                     <!-- 사용자 ID 입력 -->
                     <div class="userID">
                         <input type="text" id="user_id" name="user_id" placeholder="아이디" required />
@@ -104,10 +104,42 @@
                 <a class="find-pw" href="http://58.127.241.84:61080/member/find.html">비밀번호 찾기</a>
                 <a class="sign-on" href="http://58.127.241.84:61080/member/member_signup.html">회원가입</a>
             </div>
+
+            <!-- 로그인 결과 메시지 -->
+            <p id="loginMessage" class="message"></p>
         </div>
     </div>
 
-    <!-- JavaScript 파일 -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("login-form").addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                let formData = {
+                    user_id: document.getElementById("user_id").value,
+                    password: document.getElementById("password").value
+                };
+
+                fetch("http://58.127.241.84:60119/api/member/login", {  // ✅ API 호출 방식으로 변경
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(formData),
+                    credentials: "include"
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                        window.location.href = "http://58.127.241.84:61080/main/main.html";  // ✅ 로그인 후 메인 페이지 이동
+                    } else {
+                        document.getElementById("loginMessage").textContent = data.error || "로그인 실패";
+                    }
+                })
+                .catch(error => console.error("로그인 요청 오류:", error));
+            });
+        });
+    </script>
+
     <script src="/static/js/member/member_login.js"></script>
 </body>
 </html>

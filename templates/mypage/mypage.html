@@ -80,39 +80,94 @@
         <div class="info-box">
             <div class="info-content">
                 <div class="profile">
-                    {% if user %}
-                        <h3>{{user.username}}</h3>
-                        <p><strong>PHONE</strong> | {{ user.phone_number | default("없음") }}</p>
-                        <p><strong>EMAIL</strong> | {{ user.email | default("없음") }}</p>
-                        <p><strong>ADDRESS</strong> | {{ user.address | default("없음") }} {{ user.add_detail | default("") }}</p>
-                    {% else %}
-                        <h3>사용자 정보 없음</h3>
-                    {% endif %}
+                    <h3 id="username">사용자 정보 로딩 중...</h3>
+                    <p><strong>PHONE</strong> | <span id="phone_number">-</span></p>
+                    <p><strong>EMAIL</strong> | <span id="email">-</span></p>
+                    <p><strong>ADDRESS</strong> | <span id="address">-</span></p>
                 </div>
                 <div class="circle-container">
                     <div class="circle deep-blue">
                         <p>총 자산</p>
-                        <h2>{{ "{:,}".format(user.balance | default(0)) }}<span class="unit">원</span></h2>
+                        <h2><span id="balance">0</span><span class="unit">원</span></h2>
                     </div>                    
                     <div class="circle right-blue">
                         <p>총 잔여 마일리지</p>
-                        <h2>{{ "{:,}".format(user.mileage | default(0)) }}</h2>
+                        <h2><span id="mileage">0</span></h2>
                     </div>
                     <div class="circle green">
                         <p>예약된 여정</p>
-                        <h2>{{flight_cnt}}</h2>
+                        <h2 id="flight_cnt">0</h2>
                     </div>
                 </div>        
             </div>
         </div>
     </section>
+    
     <section class="ticket-info">
         <h2>항공권 예약 정보</h2>
-        <div id="ticket-container"></div>
+        <div id="ticket-container">로딩 중...</div>
         <div class="user-buttons">
             <button class="edit-btn" onclick="location.href='/mypage/edit';">회원 정보 수정</button>
-            <button class="delete-btn" onclick="location.href='/mypage/cancel';">회원 탈퇴</button>            
+            <button class="delete-btn" onclick="location.href='/mypage/cancel';">회원 탈퇴</button>
         </div>
     </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // ✅ 마이페이지 정보 가져오기
+            fetch("http://58.127.241.84:60119/api/mypage", {
+                method: "GET",
+                credentials: "include"
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert("사용자 정보를 불러올 수 없습니다. 로그인 상태를 확인하세요.");
+                    window.location.href = "http://58.127.241.84:61080/member/member_login.html";
+                    return;
+                }
+
+                document.getElementById("username").textContent = data.username || "사용자 정보 없음";
+                document.getElementById("phone_number").textContent = data.phone_number || "없음";
+                document.getElementById("email").textContent = data.email || "없음";
+                document.getElementById("address").textContent = (data.address || "없음") + " " + (data.add_detail || "");
+                document.getElementById("balance").textContent = data.balance.toLocaleString() || "0";
+                document.getElementById("mileage").textContent = data.mileage.toLocaleString() || "0";
+                document.getElementById("flight_cnt").textContent = data.flight_cnt || "0";
+            })
+            .catch(error => console.error("마이페이지 데이터 로드 오류:", error));
+
+            // ✅ 예약된 항공권 정보 가져오기
+            fetch("http://58.127.241.84:60119/api/mypage/get_tickets", {
+                method: "GET",
+                credentials: "include"
+            })
+            .then(response => response.json())
+            .then(data => {
+                const ticketContainer = document.getElementById("ticket-container");
+                ticketContainer.innerHTML = "";
+
+                if (!data || data.length === 0) {
+                    ticketContainer.innerHTML = "<p>예약된 항공권이 없습니다.</p>";
+                    return;
+                }
+
+                data.forEach(ticket => {
+                    const ticketItem = document.createElement("div");
+                    ticketItem.classList.add("ticket-item");
+                    ticketItem.innerHTML = `
+                        <p><strong>항공편:</strong> ${ticket.flight_name}</p>
+                        <p><strong>출발:</strong> ${ticket.departure_airport} (${ticket.departure_time})</p>
+                        <p><strong>도착:</strong> ${ticket.arrival_airport} (${ticket.arrival_time})</p>
+                        <p><strong>좌석 등급:</strong> ${ticket.seat_class}</p>
+                        <p><strong>가격:</strong> ${ticket.price.toLocaleString()}원</p>
+                    `;
+                    ticketContainer.appendChild(ticketItem);
+                });
+            })
+            .catch(error => console.error("항공권 데이터 로드 오류:", error));
+        });
+    </script>
 </body>
+
 </html>
