@@ -7,50 +7,8 @@
     <link rel="stylesheet" href="/static/css/notices/notices.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <script src="/static/js/notices/notices.js"></script>
-    <script>
-        const togglebtn = document.querySelector('.navbar_togglebtn');
-        const menu = document.querySelector('.navbar_menu');
-        const member = document.querySelector('.navbar_member');
-    
-        togglebtn.addEventListener('click', ()=>{
-            menu.classList.toggle('active');
-            member.classList.toggle('active');
-        });
-    </script>
-    <script>
-        // 네비게이션 스크립트
-        document.addEventListener("DOMContentLoaded", function () {
-            fetch("http://58.127.241.84:60119/api/member/status")
-                .then(response => response.json())
-                .then(data => {
-                    const navbarMember = document.getElementById("navbar_member");
-                    navbarMember.innerHTML = "";  // 기존 내용 초기화
 
-                    if (data.is_authenticated) {
-                        if (data.is_admin) {
-                            // ✅ 관리자 계정
-                            navbarMember.innerHTML = `
-                                <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
-                                <li class="navbar_login"><a href="http://58.127.241.84:61080/admin/admin_man.html">회원정보</a></li>
-                            `;
-                        } else {
-                            // ✅ 일반 로그인 사용자
-                            navbarMember.innerHTML = `
-                                <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
-                                <li class="navbar_login"><a href="http://58.127.241.84:61080/mypage/mypage.html">마이페이지</a></li>
-                            `;
-                        }
-                    } else {
-                        // ✅ 비로그인 상태
-                        navbarMember.innerHTML = `
-                            <li class="navbar_signup"><a href="http://58.127.241.84:61080/member/member_signup.html">회원가입</a></li>
-                            <li class="navbar_login"><a href="http://58.127.241.84:61080/member/member_login.html">로그인</a></li>
-                        `;
-                    }
-                })
-                .catch(error => console.error("사용자 상태 확인 중 오류 발생:", error));
-        });
-    </script>
+   
 </head>
 
 <!--네비게이션 메뉴 바-->
@@ -69,9 +27,12 @@
         <ul class="navbar_member" id="navbar_member">
             <!-- 로그인 상태에 따라 동적 업데이트 -->
         </ul>
-        <img class="navbar_togglebtn" src="/static/images/topbar.jpg" width="24" height="18"/>
     </nav>
 </body>
+
+<div id="image_notice">
+    <img src="/static/images/notice.jpg" alt="공지이미지">
+</div>
 
 <body>
     <div class="notice_container">
@@ -91,82 +52,6 @@
         <div class="submit_button">
             <button id="adminSubmitBtn" class="adsubmit_button" style="display: none;">공지 등록</button>
         </div>
-    </div>
-
-    <!-- ✅ JavaScript 추가 (공지사항 목록 불러오기) -->
-    <script>
-        let currentPage = 1; // 현재 페이지
-        const apiBaseUrl = "http://58.127.241.84:60119/api/notices";
-
-        // ✅ 공지사항 목록 불러오기
-        function fetchNotices(page = 1) {
-            fetch(`${apiBaseUrl}/list?page=${page}`)
-                .then(response => response.json())
-                .then(data => {
-                    displayNotices(data.notices);
-                    createPaginationButtons(data.total_pages, page);
-                })
-                .catch(error => console.error("공지사항 데이터를 불러오는 중 오류 발생:", error));
-        }
-
-        // ✅ 공지사항 리스트 표시
-        function displayNotices(notices) {
-            const noticeList = document.getElementById("notice_list");
-            noticeList.innerHTML = ""; // 기존 데이터 삭제
-
-            notices.forEach(notice => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>📢 공지사항</td>
-                    <td><a href="http://58.127.241.84:61080/notices/notice_detail.html?notice_id=${notice.notice_id}" class="notice_link">${notice.title}</a></td>
-                    <td>${notice.created_at.split("T")[0]}</td>
-                `;
-                noticeList.appendChild(row);
-            });
-        }
-
-        // ✅ 페이지네이션 버튼 생성
-        function createPaginationButtons(totalPages, currentPage) {
-            const pageNumbers = document.getElementById("pageNumbers");
-            pageNumbers.innerHTML = "";
-
-            for (let i = 1; i <= totalPages; i++) {
-                const pageSpan = document.createElement("span");
-                pageSpan.textContent = i;
-                pageSpan.classList.add("page-btn");
-                if (i === currentPage) {
-                    pageSpan.classList.add("active-page");
-                }
-                pageSpan.addEventListener("click", () => fetchNotices(i));
-                pageNumbers.appendChild(pageSpan);
-            }
-
-            document.getElementById("prevPage").style.display = currentPage > 1 ? "inline-block" : "none";
-            document.getElementById("nextPage").style.display = currentPage < totalPages ? "inline-block" : "none";
-        }
-
-        // ✅ 관리자 계정 확인 및 버튼 표시
-        function checkAdminStatus() {
-            fetch("http://58.127.241.84:60119/api/member/status")
-                .then(response => response.json())
-                .then(data => {
-                    if (data.is_admin) {
-                        document.getElementById("adminSubmitBtn").style.display = "block";
-                    }
-                })
-                .catch(error => console.error("관리자 확인 중 오류 발생:", error));
-        }
-
-        // ✅ 공지 등록 버튼 클릭 이벤트
-        document.getElementById("adminSubmitBtn").addEventListener("click", function () {
-            window.location.href = "http://58.127.241.84:61080/notices/notice_create.html";
-        });
-
-        // ✅ 초기 데이터 로드
-        document.addEventListener("DOMContentLoaded", function () {
-            fetchNotices();
-            checkAdminStatus();
-        });
-    </script>
+    </div>  
 </body>
 </html>

@@ -1,189 +1,99 @@
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("DEBUG: JavaScript 로드 완료, 결제 시스템 초기화 중...");
+    console.log("DEBUG: JavaScript 로드 완료, 예약 정보 불러오는 중...");
 
-    function getIntValue(id) {
-        let element = document.getElementById(id);
-        if (!element || !element.textContent.trim()) return 0;
-        return parseInt(element.textContent.replace(/,/g, ""), 10) || 0;
-    }
-
-    function updateDisplayedValue(id, value) {
-        let element = document.getElementById(id);
-        if (element) {
-            element.textContent = value.toLocaleString("en-US"); // 1000단위 콤마 추가
+    // 1000단위 콤마 추가 함수
+    function updateDisplayedValue(elementId, value) {
+        let element = document.getElementById(elementId);
+        if (element && !isNaN(parseInt(value, 10))) {
+            element.textContent = parseInt(value, 10).toLocaleString("en-US");
         }
     }
 
-    let totalAmount = getIntValue("final-amount"); 
-    let rootpayBalance = getIntValue("rootpay-balance");
-    let totalMileage = getIntValue("total-mileage");
-    let earnedMileage = getIntValue("earned-mileage");
-    let mileageUsed = getIntValue("mileage-used");
-    let passengerCount = parseInt(document.getElementById("passenger_count")?.value || "1", 10);
+    // 히든 필드 및 표시 영역에서 값을 추출 (세션이나 서버 렌더링된 값)
+    let flightId = document.getElementById("flight_id").value.trim();
+    let passengerCount = document.getElementById("passenger_count").value.trim();
+    let userId = document.getElementById("user_id").value.trim();
+    let username = document.getElementById("username").value.trim();
+    let engName = document.getElementById("eng_name").value.trim();
 
-    let finalMileage = totalMileage + earnedMileage;
+    // 총 결제 금액은 화면에 표시된 값에서 가져옴
+    let totalPrice = "";
+    let totalPriceElement = document.getElementById("display_total_price");
+    if (totalPriceElement) {
+        totalPrice = totalPriceElement.textContent.trim();
+    }
 
-    console.log(`DEBUG: 보유 마일리지 = ${totalMileage}, 적립 마일리지 = ${earnedMileage}, ROOT PAY 잔액 = ${rootpayBalance}, 총 금액 = ${totalAmount}, 탑승자 수 = ${passengerCount}`);
+    // final_mileage와 remaining_balance는 만약 히든 필드가 있으면 사용 (없으면 빈 문자열)
+    let finalMileage = "";
+    let finalMileageElement = document.getElementById("final_mileage");
+    if (finalMileageElement) {
+        finalMileage = finalMileageElement.value.trim();
+    }
 
-    // ✅ 최종 결제 금액을 탑승자 수만큼 곱하여 업데이트
-    let finalTotalAmount = totalAmount * passengerCount;
-    updateDisplayedValue("final-payment", finalTotalAmount);
+    let remainingBalance = "";
+    let remainingBalanceElement = document.getElementById("remaining_balance");
+    if (remainingBalanceElement) {
+        remainingBalance = remainingBalanceElement.value.trim();
+    }
 
-    // ✅ 탑승자별 운임 내역에도 1000단위 콤마 추가
-    document.querySelectorAll(".final-amount").forEach(element => {
-        let amount = parseInt(element.textContent.replace(/,/g, ""), 10) || 0;
-        element.textContent = amount.toLocaleString("en-US");
+    // URL 쿼리 스트링 생성 (세션에서 받은 값들을 그대로 사용)
+    const queryParams = new URLSearchParams({
+        flight_id: flightId,
+        total_price: totalPrice,
+        user_id: userId,
+        passenger_count: passengerCount,
+        final_mileage: finalMileage,
+        remaining_balance: remainingBalance,
+        eng_name: engName
     });
 
-    const mileageInput = document.getElementById("mileage-input");
-    const applyMileageButton = document.getElementById("apply-mileage");
-    const usedMileageDisplay = document.getElementById("mileage-used");
-    const finalPaymentDisplay = document.getElementById("final-payment");
-    const totalMileageFinalDisplay = document.getElementById("total-mileage-final");
-
-    let selectedPayment = null;
-    let paymentWindow = null;
-
-    if (!applyMileageButton) {
-        console.error("ERROR: apply-mileage 버튼을 찾을 수 없습니다.");
-        return;
-    }
-
-    // ✅ UI 업데이트
-    updateUI(rootpayBalance, mileageUsed, finalTotalAmount, finalMileage, earnedMileage, totalMileage);
-
-    // ✅ 마일리지 적용 버튼 클릭 시 최종 결제 금액 계산
-    applyMileageButton.addEventListener("click", function () {
-        console.log("DEBUG: 마일리지 적용 버튼 클릭됨");
-
-        let inputMileage = parseInt(mileageInput.value.replace(/,/g, ""), 10) || 0;
-
-        if (inputMileage > totalMileage) {
-            alert(`사용할 마일리지가 보유 마일리지(${totalMileage.toLocaleString("en-US")})를 초과할 수 없습니다.`);
-            inputMileage = totalMileage;
-        }
-
-        // ✅ 사용 마일리지가 결제 금액보다 크면 경고 메시지 표시
-        if (inputMileage > finalTotalAmount) {
-            alert("결제 금액보다 적은 값을 입력해주세요!!");
+    // 백엔드의 결제 정보 조회 API 호출 (GET 방식, 세션 쿠키 포함)
+    fetch("http://58.127.241.84:60119/api/pay/payment_info?" + queryParams.toString(), {
+        method: "GET",
+        credentials: "include"
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            console.error("예약 정보 로드 오류:", data.error);
             return;
         }
+        console.log("DEBUG: 예약 정보 불러오기 성공", data);
 
-        mileageUsed = inputMileage;
-        let updatedFinalAmount = finalTotalAmount - mileageUsed;
-        if (updatedFinalAmount < 0) updatedFinalAmount = 0;
-
-        finalMileage = totalMileage - mileageUsed + earnedMileage;
-
-        updateUI(rootpayBalance, mileageUsed, updatedFinalAmount, finalMileage, earnedMileage, totalMileage);
-
-        console.log(`DEBUG: 사용 마일리지 = ${mileageUsed}, 최종 결제 금액 = ${updatedFinalAmount}, 결제 후 최종 마일리지 = ${finalMileage}`);
-        alert("마일리지가 적용되었습니다!");
-    });
-
-    function updateUI(rootpayBalance, mileageUsed, finalAmount, finalMileage, earnedMileage, totalMileage) {
-        updateDisplayedValue("rootpay-balance", rootpayBalance);
-        updateDisplayedValue("mileage-used", mileageUsed);
-        updateDisplayedValue("final-payment", finalAmount);
-        updateDisplayedValue("total-mileage-final", finalMileage);
-        updateDisplayedValue("earned-mileage", earnedMileage);
-        updateDisplayedValue("current-mileage", totalMileage);
-    }
-
-    // ✅ 결제 수단 선택
-    document.querySelectorAll(".payment-item").forEach(button => {
-        button.addEventListener("click", function () {
-            document.querySelectorAll('.payment-item').forEach(btn => btn.classList.remove('selected'));
-            button.classList.add('selected');
-            selectedPayment = button.id;
-        });
-    });
-
-    // ✅ 결제 버튼 클릭 시 처리
-    document.getElementById("pay-button").addEventListener("click", function () {
-        if (!selectedPayment) {
-            alert("결제 수단을 선택해주세요!");
-            return;
+        // 항공권 선택 내역 업데이트 (왼쪽 섹션의 #flight-info)
+        let flightInfoDiv = document.getElementById("flight-info");
+        if (flightInfoDiv) {
+            flightInfoDiv.innerHTML = `
+                <p>항공편 ID: ${data.flight_id}</p>
+                <p>비행기: ${data.airplane_name}</p>
+                <p>좌석 등급: ${data.seat_class}</p>
+                <p>출발 공항: ${data.departure_airport}</p>
+                <p>도착 공항: ${data.arrival_airport}</p>
+                <p>출발 시간: ${data.departure_time}</p>
+                <p>도착 시간: ${data.arrival_time}</p>
+                <p>탑승자 수: ${data.passenger_count}</p>
+            `;
         }
 
-        let finalPaymentAmount = parseInt(finalPaymentDisplay.textContent.replace(/,/g, ""), 10);
-        let flightId = document.getElementById("flight_id")?.value;
-        if (selectedPayment === "rootpay" && rootpayBalance < finalPaymentAmount) {
-            alert("결제 금액이 부족합니다!!");
-            return;
-        }
+        // 탑승자별 운임 내역 및 최종 결제 금액 업데이트
+        updateDisplayedValue("final-amount", data.total_price);
+        updateDisplayedValue("final-payment", data.total_price);
 
-        let usedRootPay = finalPaymentAmount > rootpayBalance ? rootpayBalance : finalPaymentAmount;
-        let remainingBalance = rootpayBalance - usedRootPay;
+        // (선택 사항) 마일리지/ROOT PAY 관련 정보 업데이트 (API에서 해당 값들을 반환하는 경우)
+        updateDisplayedValue("total-mileage", data.total_mileage || 0);
+        updateDisplayedValue("earned-mileage", data.earned_mileage || 0);
+        updateDisplayedValue("rootpay-balance", data.balance || 0);
+        updateDisplayedValue("mileage-used", 0); // 초기값 0
 
-        let queryParams = new URLSearchParams({
-            total_price: finalPaymentAmount.toString(),
-            user_id: document.getElementById("user_id").value,
-            username: encodeURIComponent(username),
-            eng_name: document.getElementById("eng_name").value,
-            mileage_used: mileageUsed.toString(),
-            final_mileage: finalMileage.toString(),
-            used_rootpay: usedRootPay.toString(),
-            remaining_balance: remainingBalance.toString(),
-            passenger_count: passengerCount,
-            flight_id: flightId
-        });
-
-        let paymentUrl = `/pay/payment_info?${queryParams.toString()}`;
-
-        if (selectedPayment === "rootpay") {
-            paymentWindow = window.open(paymentUrl, "PaymentInfo", "width=400,height=400,resizable=yes");
-
-            if (!paymentWindow) {
-                alert("팝업 차단이 활성화되어 있습니다. 팝업을 허용해주세요.");
-            } else {
-                paymentWindow.focus();
-            }
-        } else if (selectedPayment === "kg-inicis") {
-            processInicisPayment(finalPaymentAmount);
-        }
+        // 결제 정보 전송 폼의 히든 필드 업데이트 (향후 결제 진행 시 사용)
+        document.getElementById("flight_id").value = data.flight_id;
+        document.getElementById("passenger_count").value = data.passenger_count;
+        document.getElementById("user_id").value = data.user_id;
+        document.getElementById("username").value = data.username;
+        document.getElementById("eng_name").value = data.eng_name;
+    })
+    .catch(error => {
+        console.error("예약 정보 fetch 오류:", error);
     });
-
-    // ✅ 결제 완료 후 부모 창 닫고 result로 이동
-    window.addEventListener("message", function (event) {
-        if (event.data && event.data.redirect_url) {
-            console.log(`DEBUG: 결제 완료 → ${event.data.redirect_url}`);
-
-            if (paymentWindow) {
-                paymentWindow.close();
-            }
-
-            window.location.href = event.data.redirect_url;
-        }
-    });
-
-    // ✅ IMP(이니시스) 결제 처리 유지
-    function processInicisPayment(amount) {
-        console.log("DEBUG: KG 이니시스 결제 시작 (금액: " + amount + "원)");
-
-        let buyerEmail = document.getElementById("email")?.value || "test@default.com";
-        let buyerName = document.getElementById("username")?.value || "Guest";
-        let buyerTel = document.getElementById("phone_number")?.value || "010-0000-0000";
-
-        IMP.init("imp87014111");
-
-        IMP.request_pay({
-            pg: "html5_inicis.INIpayTest",
-            pay_method: "card",
-            merchant_uid: "order_" + new Date().getTime(),
-            name: "항공권 결제",
-            amount: amount,
-            buyer_email: buyerEmail,
-            buyer_name: buyerName,
-            buyer_tel: buyerTel,
-            m_redirect_url: "/pay/result"
-        }, function (rsp) {
-            if (rsp.success) {
-                alert("결제 성공! 결제번호: " + rsp.imp_uid);
-                window.location.href = "/pay/result";
-            } else {
-                alert("결제 실패: " + rsp.error_msg);
-            }
-        });
-    }
 });
+

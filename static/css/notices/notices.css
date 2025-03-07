@@ -122,13 +122,12 @@ a {
         border-radius: none;
     }
 }
-.image_notice {
-    width: 100%; 
-    max-width: 1920px; 
+#image_notice {
+    width: 100%;  
     height: auto; 
     overflow: hidden; 
 }
-.image_notice img {
+#image_notice img {
     width: 100%; 
     height: 350px; 
     object-fit: cover; 
@@ -139,12 +138,13 @@ a {
 .notice_container {
     width: 90%;
     margin-top: 0px;
-    margin-left: 50px; 
+    margin:auto;
     padding: 20px;
     background: #fff;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     margin-bottom: 10px;
+   
     position: relative;  /* 하위 absolute 요소의 기준이 됨 */
     display: flex;
     flex-direction: column;
@@ -186,23 +186,28 @@ a {
     font-size: 20px; 
     color: #444; 
 }
+#nextPage{
+	border-radius:10px;
+}
 
+#prevPage{
+	border-radius:10px;
+}
 
 .pagination {
     margin-top: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 20px;
+    position:relative;
+    z-index: 10;
 }
 
 .page-btn {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
+    padding: 8px 14px;
     background-color: #fff;
     cursor: pointer;
-    border-radius: 5px;
-    font-size: 15px;
+    font-size: 17px;
 }
 
 .page-btn:hover {
@@ -210,7 +215,7 @@ a {
 }
 
 .active-page {
-    padding: 8px 12px;
+    padding: 8px 14px;
     border-radius: 5px;    background-color: #000;
     color: #fff;
 }

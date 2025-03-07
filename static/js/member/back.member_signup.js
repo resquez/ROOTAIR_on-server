@@ -3,11 +3,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const emailInput = document.getElementById("email");
     const userIdInput = document.getElementById("user_id");
     const signupButton = document.getElementById("signupButton");
+    const idCheckButton = document.getElementById("idCheckButton");
     const idCheckResult = document.getElementById("idCheckResult");
     const passwordInput = document.getElementById("password");
     const confirmPasswordInput = document.getElementById("confirm_password");
     const phoneInput = document.getElementById("phone_number");
     const nameInput = document.getElementById("username");
+
     const passwordError = document.getElementById("passwordError");
     const confirmPasswordError = document.getElementById("confirmPasswordError");
     const phoneError = document.getElementById("phoneError");
@@ -39,30 +41,21 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     updateNavbar(); // 페이지 로드 시 즉시 실행
 
-    /** ✅ 이메일 인증 후 자동 입력 (localStorage 사용) */
-    const verifiedEmail = localStorage.getItem("verified_email");
-    if (verifiedEmail) {
-        emailInput.value = verifiedEmail;
-    } else {
-        alert("이메일 인증이 필요합니다.");
-        window.location.href = "http://58.127.241.84:61080/member/member_email.html";
-    }
-
-    // /** ✅ 이메일 인증 후 자동 입력 */
-    // fetch("http://58.127.241.84:60119/api/member/get_verified_email", {
-    //     method: "GET",
-    //     credentials: "include"
-    // })
-    // .then(response => response.json())
-    // .then(data => {
-    //     if (data.email) {
-    //         document.getElementById("email").value = data.email;
-    //     } else {
-    //         alert("이메일 인증이 필요합니다.");
-    //         window.location.href = "http://58.127.241.84:61080/member/member_email.html";
-    //     }
-    // })
-    // .catch(error => console.error("이메일 확인 오류:", error));
+    /** ✅ 이메일 인증 후 자동 입력 */
+    fetch("http://58.127.241.84:60119/api/member/get_verified_email", {
+        method: "GET",
+        credentials: "include"
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.email) {
+            document.getElementById("email").value = data.email;
+        } else {
+            alert("이메일 인증이 필요합니다.");
+            window.location.href = "http://58.127.241.84:61080/member/member_email.html";
+        }
+    })
+    .catch(error => console.error("이메일 확인 오류:", error));
 
     /** ✅ 아이디 중복 확인 기능 */
     function checkId() {
@@ -121,16 +114,18 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(data => {
             if (data.message) {
                 alert("회원가입 성공!");
-
-                // ✅ 회원가입 완료 후 localStorage에서 이메일 삭제
-                localStorage.removeItem("verified_email");
-
+                document.cookie = "email_verified=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                 window.location.href = "http://58.127.241.84:61080/member/member_login.html";
             } else {
                 alert("회원가입 실패: " + data.error);
             }
         })
         .catch(error => console.error("회원가입 오류:", error));
+    });
+
+    /** ✅ 페이지를 벗어나면 쿠키 삭제 (beforeunload 이벤트) */
+    window.addEventListener("beforeunload", function () {
+        document.cookie = "email_verified=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     });
 
     /** ✅ 주소 검색 기능 */
@@ -156,23 +151,4 @@ document.addEventListener("DOMContentLoaded", function () {
     validateField(passwordInput, /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,20}$/, passwordError, "비밀번호는 영문, 숫자, 특수문자를 포함한 8~20자로 설정해야 합니다.");
     validateField(phoneInput, /^010-\d{4}-\d{4}$|^010\d{8}$/, phoneError, "전화번호 형식이 올바르지 않습니다.");
     validateField(nameInput, /.{2,}/, nameError, "이름은 최소 2자 이상 입력해야 합니다.");
-
-    window.addEventListener("beforeunload", function () {
-        localStorage.removeItem("verified_email");  // ✅ 페이지 떠날 때 이메일 삭제
-    });    
-
-    /** ✅ 로그아웃 기능 */
-    document.getElementById("logoutButton").addEventListener("click", function () {
-        fetch("http://58.127.241.84:60119/api/member/logout", {
-            method: "POST",
-            credentials: "include"
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message);
-            window.location.href = "http://58.127.241.84:61080/main/main.html";
-        })
-        .catch(error => console.error("로그아웃 오류:", error));
-    });
 });
-

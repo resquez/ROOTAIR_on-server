@@ -10,52 +10,6 @@
     <script src="https://stdpay.inicis.com/stdjs/INIStdPay.js"></script> 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
-    <script>
-        const togglebtn = document.querySelector('.navbar_togglebtn');
-        const menu = document.querySelector('.navbar_menu');
-        const member = document.querySelector('.navbar_member');
-    
-        togglebtn.addEventListener('click', ()=>{
-            menu.classList.toggle('active');
-            member.classList.toggle('active');
-        });
-    </script>
-
-    <script>
-        // 네비게이션 스크립트
-    document.addEventListener("DOMContentLoaded", function () {
-        fetch("http://58.127.241.84:60119/api/member/status")
-            .then(response => response.json())
-            .then(data => {
-                const navbarMember = document.getElementById("navbar_member");
-                navbarMember.innerHTML = "";  // 기존 내용 초기화
-
-                if (data.is_authenticated) {
-                    if (data.is_admin) {
-                        // ✅ 관리자 계정
-		                        navbarMember.innerHTML = `
-                            <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
-                            <li class="navbar_login"><a href="http://58.127.241.84:61080/admin/admin_man.html">회원정보</a></li>
-                        `;
-                    } else {
-                        // ✅ 일반 로그인 사용자
-                        navbarMember.innerHTML = `
-                            <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
-                            <li class="navbar_login"><a href="http://58.127.241.84:61080/mypage/mypage.html">마이페이지</a></li>
-                        `;
-                    }
-                } else {
-                    // ✅ 비로그인 상태
-                    navbarMember.innerHTML = `
-                        <li class="navbar_signup"><a href="http://58.127.241.84:61080/member/member_signup.html">회원가입</a></li>
-                        <li class="navbar_login"><a href="http://58.127.241.84:61080/member/member_login.html">로그인</a></li>
-                    `;
-                }
-            })
-            .catch(error => console.error("사용자 상태 확인 중 오류 발생:", error));
-    });
-    </script>
-    
 </head>
 
 <!--네비게이션 메뉴 바-->
@@ -74,25 +28,22 @@
         <ul class="navbar_member" id="navbar_member">
             <!-- 로그인 상태에 따라 동적 업데이트 -->
         </ul>
-        <img class="navbar_togglebtn" src="/static/images/topbar.jpg" width="24" height="18"/>
     </nav>
 </body>
-
-<body>
-    <div class="container">
+   <div class="container">
         <div class="left-section">
             <div class="box">
                 <h2>항공권 선택 내역</h2>
-                <div id="flight-info">{{ flights_id }}</div>
+                <div id="flight-info"></div>
             </div>
 
             <div class="box">
                 <h2>탑승자별 운임 내역</h2>
-                <div id="fare-info">{{ price }}</div>
+                <div id="fare-info"></div>
                 <div class="final-amount-container">
                     <p class="final-amount">총 운임:</p>
                     <div class="final-price">
-                        <span id="final-amount">{{ total_price }}</span> KRW
+                        <span id="final-amount"></span> KRW
                     </div>
                 </div>
             </div>
@@ -102,7 +53,7 @@
                 <div class="mileage-info">
                     <p>보유 마일리지</p>
                     <div class="mileage-value">
-                        <span id="total-mileage">{{ total_mileage }}</span> 마일리지
+                        <span id="total-mileage"></span> 마일리지
                     </div>
                 </div>
                 <div class="mileage-input-wrapper">
@@ -121,42 +72,42 @@
                     <button class="payment-item" id="kg-inicis"><img src="/static/images/kg_inicis_logo.png" alt="KG 이니시스" width="80"></button>
                 </div>
             </div>
-            
+
             <div class="box">
                 <h2>결제 상세</h2>
                 <div id="rootpay-section">
                     <p>
                         <span>ROOT PAY 잔액</span>
-                        <span id="rootpay-balance">{{ balance }}</span>
-                        <span class="currency">KRW</span>
+                        <span id="rootpay-balance"></span>
+                        <span class="currency"></span>
                     </p>
                     <p>
                         <span>사용 마일리지</span>
-                        <span id="mileage-used">{{ mileage_used }}</span>
+                        <span id="mileage-used"></span>
                         <span class="currency">M</span>
                     </p>
                 </div>
                 <div class="final-payment-container">
                     <p>
                         <span>최종 결제 금액</span>
-                        <span id="final-payment">{{ total_price }}</span>
+                        <span id="final-payment"></span>
                         <span class="currency">KRW</span>
                     </p>
                 </div>
-                
+
             </div>
 
             <div class="mileage-container">
                 <h2>마일리지 혜택</h2>
                 <div class="mileage-box">
                     <div class="mileage-item">
-                        <span>현재 마일리지</span> <span id="current-mileage">{{ total_mileage }}</span> 마일리지
+                        <span>현재 마일리지</span> <span id="current-mileage"></span> 마일리지
                     </div>
                     <div class="mileage-item">
-                        <span>적립 마일리지</span> <span id="earned-mileage">{{ earned_mileage }}</span> 마일리지
+                        <span>적립 마일리지</span> <span id="earned-mileage"></span> 마일리지
                     </div>
                     <div class="mileage-item">
-                        <span>결제 시 보유 마일리지</span> <span id="total-mileage-final">{{ final_mileage }}</span> 마일리지
+                        <span>결제 시 보유 마일리지</span> <span id="total-mileage-final"></span> 마일리지
                     </div>
                 </div>
             </div>
@@ -165,16 +116,11 @@
                 <button id="pay-button">결제</button>
                 <button id="cancel-button">취소</button>
             </div>
-            <input type="hidden" id="flight_id" value="{{ flight_id }}"/>
-            <input type="hidden" id="passenger_count" value="{{ passenger_count }}"/>
-            <input type="hidden" id="user_id" value="{{ user_id }}">
-            <input type="hidden" id="username" value="{{ username }}">
-            <input type="hidden" id="eng_name" value="{{ eng_name }}">
-
-
-
-
-
+            <input type="hidden" id="flight_id" value="flight_id "/>
+            <input type="hidden" id="passenger_count" value="passenger_count "/>
+            <input type="hidden" id="user_id" value="user_id ">
+            <input type="hidden" id="username" value="username ">
+            <input type="hidden" id="eng_name" value="eng_name">
         </div>
     </div>
     <script src="/static/js/pay/pay.js"></script>

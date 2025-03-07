@@ -6,51 +6,6 @@
     <title>ROOT AIR</title>
     <link rel="stylesheet" href="/static/css/main/main.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-    <script>
-        const togglebtn = document.querySelector('.navbar_togglebtn');
-        const menu = document.querySelector('.navbar_menu');
-        const member = document.querySelector('.navbar_member');
-
-        togglebtn.addEventListener('click', ()=>{
-            menu.classList.toggle('active');
-            member.classList.toggle('active');
-        });
-    </script>
-
-    <script>
-		// 네비게이션 스크립트
-    document.addEventListener("DOMContentLoaded", function () {
-        fetch("http://58.127.241.84:60119/api/member/status")
-            .then(response => response.json())
-            .then(data => {
-                const navbarMember = document.getElementById("navbar_member");
-                navbarMember.innerHTML = "";  // 기존 내용 초기화
-
-                if (data.is_authenticated) {
-                    if (data.is_admin) {
-                        // ✅ 관리자 계정
-                        navbarMember.innerHTML = `
-                            <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
-                            <li class="navbar_login"><a href="http://58.127.241.84:61080/admin/admin_man.html">회원정보</a></li>
-                        `;
-                    } else {
-                        // ✅ 일반 로그인 사용자
-                        navbarMember.innerHTML = `
-                            <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
-                            <li class="navbar_login"><a href="http://58.127.241.84:61080/mypage/mypage.html">마이페이지</a></li>
-                        `;
-                    }
-                } else {
-                    // ✅ 비로그인 상태
-                    navbarMember.innerHTML = `
-                        <li class="navbar_signup"><a href="http://58.127.241.84:61080/member/member_signup.html">회원가입</a></li>
-                        <li class="navbar_login"><a href="http://58.127.241.84:61080/member/member_login.html">로그인</a></li>
-                    `;
-                }
-            })
-            .catch(error => console.error("사용자 상태 확인 중 오류 발생:", error));
-    });
-    </script>
 </head>
 <script src="/static/js/main/main.js"></script>
 
@@ -70,7 +25,6 @@
         <ul class="navbar_member" id="navbar_member">
             <!-- 로그인 상태에 따라 동적 업데이트 -->
         </ul>
-        <img class="navbar_togglebtn" src="/static/images/topbar.jpg" width="24" height="18"/>
     </nav>
 </body>
 

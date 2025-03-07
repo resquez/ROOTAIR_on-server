@@ -1,0 +1,209 @@
+
+document.addEventListener("DOMContentLoaded", function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const noticeId = urlParams.get("notice_id");
+
+    if (!noticeId) {
+        alert("잘못된 접근입니다.");
+        window.location.href = "http://58.127.241.84:61080/notices/notices.html";
+        return;
+    }
+
+    console.log("✅ 현재 notice_id 값:", noticeId);
+
+    const editBtnContainer = document.getElementById("editButtonContainer");
+    const deleteBtnContainer = document.getElementById("deleteButtonContainer");
+
+    fetch("http://58.127.241.84:60119/api/member/status", {
+        method: "GET",
+        credentials: "include"
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("🔍 사용자 정보:", data);
+
+        if (data.is_authenticated && (data.is_admin === true || data.is_admin === "true" || data.is_admin === 1)) {
+            console.log("✅ 관리자 계정 확인됨. 수정/삭제 버튼 활성화");
+            if (editBtnContainer) editBtnContainer.style.display = "block";
+            if (deleteBtnContainer) deleteBtnContainer.style.display = "block";
+        }
+    })
+    .catch(error => console.error("🚨 사용자 상태 확인 중 오류 발생:", error));
+
+    fetch(`http://58.127.241.84:60119/api/notices/detail/${noticeId}`)
+    .then(response => {
+        if (!response.ok) {
+            console.error(`❌ 공지사항 API 오류 (${response.status}):`, response.statusText);
+            return response.text();
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (typeof data === "string" && data.includes("<!DOCTYPE html>")) {
+            console.error("❌ API 응답이 JSON이 아님:", data);
+            alert("공지사항을 불러올 수 없습니다. (404 Not Found)");
+            return;
+        }
+
+        console.log("📜 API 응답 데이터:", data);
+
+        const noticeTitle = document.getElementById("noticeTitle");
+        const noticeCreatedAt = document.getElementById("noticeCreatedAt");
+        const noticeContent = document.getElementById("noticeContent");
+
+        if (noticeTitle) noticeTitle.innerText = data.title || "제목 없음";
+        if (noticeCreatedAt) noticeCreatedAt.innerText = data.created_at || "날짜 없음";
+        if (noticeContent) noticeContent.innerHTML = data.content || "내용 없음";
+    })
+    .catch(error => console.error("🚨 공지사항 데이터를 불러오는 중 오류 발생:", error));
+});
+
+
+// ✅ 목록으로 돌아가는 함수
+function goBack() {
+    window.location.href = "/notices";
+}
+
+// ✅ 수정 페이지로 이동
+function goedit() {
+    const noticeId = document.getElementById("editBtn").getAttribute("data-notice-id");
+    if (!noticeId) {
+        alert("공지사항 ID를 찾을 수 없습니다.");
+        return;
+    }
+    window.location.href = `/notices/edit/${noticeId}`;
+}
+
+// ✅ 공지사항 삭제 기능
+document.addEventListener("DOMContentLoaded", function() {
+    const deleteBtn = document.getElementById("deleteBtn");
+
+    if (deleteBtn) {
+        deleteBtn.addEventListener("click", function() {
+            const noticeId = deleteBtn.getAttribute("data-notice-id");
+
+            if (!noticeId) {
+                alert("공지사항 ID를 찾을 수 없습니다.");
+                return;
+            }
+
+            if (confirm("정말 삭제하시겠습니까?")) {
+                fetch(`http://58.127.241.84:60119/api/notices/delete/${noticeId}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error("공지사항 삭제 실패");
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message || "공지사항이 삭제되었습니다.");
+                    window.location.href = "/notices";
+                })
+                .catch(error => {
+                    console.error("🚨 삭제 오류:", error);
+                    alert("오류가 발생했습니다. 다시 시도해주세요.");
+                });
+            }
+        });
+    }
+});
+//dddd
+document.addEventListener("DOMContentLoaded", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const noticeId = urlParams.get("notice_id");
+
+            if (!noticeId) {
+                alert("잘못된 접근입니다.");
+                window.location.href = "http://58.127.241.84:61080/notices/notices.html";
+                return;
+            }
+
+            fetch(`http://58.127.241.84:60119/api/notices/detail/${noticeId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        window.location.href = "http://58.127.241.84:61080/notices/notices.html";
+                        return;
+                    }
+
+                    document.getElementById("notice_detail_title").textContent = data.title;
+                    document.getElementById("notice_detail_date").textContent = data.created_at;
+                    document.getElementById("notice_detail_content").textContent = data.content;
+
+                    if (data.file_url) {
+                        const fileLink = document.createElement("a");
+                        fileLink.href = data.file_url;
+                        fileLink.download = "";
+                        fileLink.innerHTML = '<img src="http://58.127.241.84:61080/static/images/file.png" width="20" height="15">';
+                        document.getElementById("notice_file").appendChild(fileLink);
+                    }
+                })
+                .catch(error => {
+                    console.error("공지사항 상세 정보를 불러오는 중 오류 발생:", error);
+                    alert("공지사항을 불러오는 중 오류가 발생했습니다.");
+                });
+
+
+            // ✅ 로그인한 사용자 정보 확인 (관리자 여부)
+fetch("http://58.127.241.84:60119/api/member/status")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.is_authenticated && data.is_admin) {
+                        document.getElementById("admin_buttons").style.display = "block";
+                    }
+                })
+                .catch(error => console.error("관리자 여부 확인 중 오류 발생:", error));
+        });
+//
+	    document.addEventListener("DOMContentLoaded", function () {
+            const pathParts = window.location.pathname.split('/');
+            const noticeId = pathParts[pathParts.length -1];
+            const apiUrl = `http://58.127.241.84:60119/api/notices/detail/${noticeId}`;
+
+            if (!noticeId) {
+                alert("공지사항 ID가 없습니다.");
+                return;
+            }
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert("공지사항을 찾을 수 없습니다.");
+                        window.location.href = "http://58.127.241.84:61080/notices/notices.html";
+                        return;
+                    }
+
+                    document.getElementById("notice_detail_title").textContent = data.title;
+                    document.getElementById("notice_detail_date").textContent = data.created_at;
+                    document.getElementById("notice_detail_content").textContent = data.content;
+
+                    if (data.file_url) {
+                        const downloadLink = document.getElementById("download_link");
+                        downloadLink.href = data.file_url;
+                        downloadLink.style.display = "inline";
+                    }
+
+                    // 관리자 계정 여부 확인 (세션 상태 체크)
+                    fetch("http://58.127.241.84:60119/api/member/status")
+                        .then(response => response.json())
+                        .then(userData => {
+                            if (userData.is_authenticated && userData.is_admin) {
+                                document.getElementById("editButtonContainer").style.display = "block";
+                                document.getElementById("deleteButtonContainer").style.display = "block";
+                                document.getElementById("editBtn").setAttribute("data-notice-id", noticeId);
+                                document.getElementById("deleteBtn").setAttribute("data-notice-id", noticeId);
+                            }
+                        })
+                        .catch(error => console.error("세션 정보 불러오기 오류:", error));
+                })
+                .catch(error => console.error("공지사항 불러오기 오류:", error));
+        });
+
+        function goBack() {
+            window.location.href = "http://58.127.241.84:61080/notices/notices.html";
+        }

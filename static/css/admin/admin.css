@@ -172,21 +172,23 @@ a {
 .logininput button:hover {
     background-color: #717171;
 }
-input[type="text"], input[type="password"] {
-    
-    width: 100%;
-    padding: 10px;
-    border: 2px solid black;
-    border-radius: 10px; 
-    margin-bottom: 10px; 
-    font-size: 16px;
-    box-sizing: border-box;
+   
+/* 예시: style.css 혹은 <style> 태그 내부 */
+input[type="text"],
+input[type="password"] {
+  width: 10%;
+  padding: 10px;
+  border: 2px solid black;
+  border-radius: 10px;
+  margin-left: 10px;
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+  /* 기타 필요한 속성들 */
 }
 
-input[type="text"]:focus, input[type="password"]:focus {
-    outline: none;
-    border-color: #797979;
-}   
+input[type="text"]:focus,
+input[type="password"]:focus {
+  border-color: #f19797; /* 포커스 시 보더 색상 변경 */
+}
 
 /* ✅ Flash 메시지 스타일 (로그인 폼과 같은 너비로 조정) */
 .flash-messages {

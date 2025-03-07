@@ -25,6 +25,7 @@ a {
     justify-content: center;
     align-items: center;
 }
+
 .navbar_logo img {
     margin-left: 150px;
     width: 210px;
@@ -75,7 +76,7 @@ a {
     position:absolute;
     top: 32px;
     right: 32px;
-    font-size: 24px;    
+    font-size: 24px;
 }
 
 @media screen and (max-width: 1040px) {
@@ -179,3 +180,4 @@ a {
     color: #333; /* 빨간색 강조 */
     font-weight: bold;
 }
+

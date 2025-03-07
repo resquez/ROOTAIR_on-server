@@ -1,20 +1,16 @@
-/* 전체 페이지 기본 설정 */
 body {
-    margin: 0;
+    margin:0;
     font-family: "Noto Sans KR";
     font-weight: 400;
-}
-
-/* 기본 텍스트 스타일 */
-a {
-    text-decoration: none;
-    color: #000;
+    font-style: normal;
 }
 em {
     font-style: normal;
 }
-
-/* 네비게이션 바 */
+a {
+    text-decoration: none;
+    color: #000;
+}
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -23,8 +19,7 @@ em {
     padding: 8px 12px;
     border-bottom: 1px solid #ccc;
 }
-
-.navbar_logo {
+.navbar_logo{
     width: 150px;
     display: flex;
     justify-content: center;
@@ -36,7 +31,6 @@ em {
     width: 210px;
     height: auto;
 }
-
 .navbar_menu {
     display: flex;
     list-style: none;
@@ -45,7 +39,6 @@ em {
     font-weight: 500;
     gap: 100px;
 }
-
 .navbar_menu li {
     padding: 8px 20px;
 }
@@ -66,33 +59,68 @@ em {
     background-color: #e3dede;
     border-radius: 10px;
 }
-
+.navbar_signup {
+    margin-top: 13px;
+    margin-right: 10px;
+}
 .navbar_login {
     font-size: 20px;
+    margin-top: 8px;
+    margin-right: 50px;
     font-weight: 500;
     border: 2px solid #000;
     border-radius: 10px;
 }
+.navbar_togglebtn {
+    display: none;
+    position:absolute;
+    top: 32px;
+    right: 32px;
+    font-size: 24px;
+}
 
-/* 모바일 반응형 */
 @media screen and (max-width: 1040px) {
     .navbar {
         flex-direction: column;
         align-items: flex-start;
     }
     .navbar_menu {
-        font-size: 16px;
+        font-size:16px;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        gap: 0px
+    }
+    .navbar_menu li {
+        width: 100%;
+        text-align: center;
+    }
+    .navbar_member {
         display: none;
         flex-direction: column;
         align-items: center;
         width: 100%;
     }
+    .navbar_member li {
+        width: 100%;
+        text-align: center;
+    }
+    .navbar_togglebtn {
+        display: block;
+    }
     .navbar_menu.active,
     .navbar_member.active {
         display: flex;
     }
-    .navbar_togglebtn {
-        display: block;
+    .navbar_signup {
+        margin-left: 10px;
+    }
+    .navbar_login {
+        margin-left: 50px;
+        font-size:16px;
+        border: none;
+        border-radius: none;
     }
 }
 

@@ -1,0 +1,170 @@
+document.addEventListener("DOMContentLoaded", function () {
+    fetch("http://58.127.241.84:60119/api/member/status", {
+        method: "GET",
+        credentials: "include"
+    })
+    .then(response => response.json())
+    .then(data => {
+        const navbarMember = document.getElementById("navbar_member");
+        navbarMember.innerHTML = "";  // 기존 내용 초기화
+
+        if (data.is_authenticated) {
+            if (data.is_admin) {
+                // ✅ 관리자 계정
+                navbarMember.innerHTML = `
+                    <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
+                    <li class="navbar_login"><a href="http://58.127.241.84:61080/admin/admin_man.html">회원정보</a></li>
+                `;
+            } else {
+                // ✅ 일반 로그인 사용자
+                navbarMember.innerHTML = `
+                    <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
+                    <li class="navbar_login"><a href="http://58.127.241.84:61080/mypage/mypage.html">마이페이지</a></li>
+                `;
+            }
+        } else {
+            // ✅ 비로그인 상태
+            navbarMember.innerHTML = `
+                <li class="navbar_signup"><a href="http://58.127.241.84:61080/member/member_email.html">회원가입</a></li>
+                <li class="navbar_login"><a href="http://58.127.241.84:61080/member/member_login.html">로그인</a></li>
+            `;
+        }
+    })
+    .catch(error => console.error("사용자 상태 확인 중 오류 발생:", error));
+});
+//불러올게 // URL 쿼리스트링에서 notice_id 추출 (예: notice_detail.html?notice_id=123)
+   document.addEventListener("DOMContentLoaded", function () {
+    // URL 쿼리스트링에서 notice_id 추출
+    const urlParams = new URLSearchParams(window.location.search);
+    const noticeId = urlParams.get('notice_id');
+
+    if (!noticeId) {
+        console.error("공지사항 ID가 제공되지 않았습니다.");
+        return;
+    }
+
+    // 수정, 삭제 버튼 요소 가져오기
+    const editBtnContainer = document.getElementById("editButtonContainer");
+    const deleteBtnContainer = document.getElementById("deleteButtonContainer");
+    const editBtn = document.getElementById("editBtn");
+    const deleteBtn = document.getElementById("deleteBtn");
+
+    if (editBtn) editBtn.setAttribute("data-notice-id", noticeId);
+    if (deleteBtn) deleteBtn.setAttribute("data-notice-id", noticeId);
+
+    // ✅ 사용자 상태 확인 (관리자 여부)
+    fetch("http://58.127.241.84:60119/api/member/status", {
+        method: "GET",
+        credentials: "include"
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("사용자 정보:", data); // 디버깅을 위한 콘솔 출력
+
+        if (data.is_authenticated && data.is_admin) {
+            console.log("관리자 계정 확인됨");
+            if (editBtnContainer) editBtnContainer.style.display = "block";
+            if (deleteBtnContainer) deleteBtnContainer.style.display = "block";
+        }
+    })
+    .catch(error => console.error("사용자 상태 확인 중 오류 발생:", error));
+
+    // ✅ 공지사항 상세 데이터를 API에서 가져오기
+    fetch(`http://58.127.241.84:60119/api/notices/detail/${noticeId}`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+            return;
+        }
+
+        // 받아온 데이터로 HTML 요소 채우기
+        const noticeTitle = document.getElementById("noticeTitle");
+        const noticeCreatedAt = document.getElementById("noticeCreatedAt");
+        const noticeContent = document.getElementById("noticeContent");
+        const noticeFile = document.getElementById("noticeFile");
+
+        if (noticeTitle) noticeTitle.innerText = data.title;
+        if (noticeCreatedAt) noticeCreatedAt.innerText = data.created_at;
+        if (noticeContent) noticeContent.innerHTML = data.content;
+
+        // 첨부 파일이 있을 경우 다운로드 링크 추가
+        if (data.file_url && noticeFile) {
+            const fileLink = document.createElement("a");
+            fileLink.href = data.file_url;
+            fileLink.innerText = "첨부 파일 다운로드";
+            fileLink.setAttribute("download", "");
+            noticeFile.appendChild(fileLink);
+        }
+    })
+    .catch(error => {
+        console.error("공지사항 데이터를 불러오는 중 오류 발생:", error);
+    });
+});
+
+// 테스트 
+fetch(`http://58.127.241.84:60119/api/notices/detail/${noticeId}`)
+    .then(response => response.json())
+    .then(data => {
+        console.log("API 응답 데이터:", data); // 전체 데이터 확인
+        console.log("공지사항 내용:", data.content); // content 값 확인
+    });
+const urlParams = new URLSearchParams(window.location.search);
+const noticeId = urlParams.get('notice_id');
+
+console.log("현재 notice_id 값:", noticeId); // 값이 정상적으로 출력되는지 확인
+
+
+// ✅ 목록으로 돌아가는 함수
+function goBack() {
+    window.location.href = "/notices";  // 공지사항 목록 페이지로 이동
+}
+function goedit() {
+    const noticeId = document.getElementById("editBtn").getAttribute("data-notice-id");
+
+    if (!noticeId) {
+        alert("공지사항 ID를 찾을 수 없습니다.");
+        return;
+}
+
+    window.location.href = `/notices/edit/${noticeId}`; // ✅ 공지사항 수정 페이지로 이동
+}
+
+
+//삭제
+document.addEventListener("DOMContentLoaded", function() {
+    const deleteBtn = document.getElementById("deleteBtn");
+
+    if (deleteBtn) {
+        deleteBtn.addEventListener("click", function() {
+            const noticeId = deleteBtn.getAttribute("data-notice-id"); // HTML에서 ID 가져오기
+
+            if (!noticeId) {
+                alert("공지사항 ID를 찾을 수 없습니다.");
+                return;
+            }
+
+            if (confirm("정말 삭제하시겠습니까?")) {
+                fetch(`http://58.127.241.84:60119/api/notices/delete/${noticeId}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                        window.location.href = data.redirect_url;
+                    } else {
+                        alert("삭제에 실패했습니다.");
+                    }
+                })
+                .catch(error => {
+                    console.error("삭제 오류:", error);
+                    alert("오류가 발생했습니다. 다시 시도해주세요.");
+                });
+            }
+        });
+    }
+});

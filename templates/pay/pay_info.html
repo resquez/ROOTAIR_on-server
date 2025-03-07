@@ -71,7 +71,7 @@
     </div>
 
     <!-- 결제 정보 전송 폼 -->
-    <form id="paymentInfoForm" action="/pay/process_payment" method="POST">
+    <form id="paymentInfoForm">
 <!-- 🔥 더 이상 필요 없는 `Flights` 데이터 제거 -->
         <input type="hidden" id="flight_id" name="flight_id" value="{{ flight_id }}">
         <input type="hidden" id="user_id" name="user_id" value="{{ user_id }}">

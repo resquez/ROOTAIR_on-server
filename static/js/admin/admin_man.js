@@ -1,5 +1,56 @@
-document.addEventListener("DOMContentLoaded", async function () {
-    await fetchMembers();  // 페이지 로드 시 회원 목록 가져오기
+
+                // 네비게이션 스크립트
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch("http://58.127.241.84:60119/api/member/status", {
+                mcdethod: "GET",
+                credentials:"include"
+            })
+            .then(response => response.json())
+            .then(data => {
+                const navbarMember = document.getElementById("navbar_member");
+                navbarMember.innerHTML = "";  // 기존 내용 초기화
+                if (data.is_authenticated) {
+                    if (data.is_admin) {
+                        // ✅ 관리자 계정
+                        navbarMember.innerHTML = `
+                            <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
+                            <li class="navbar_login"><a href="http://58.127.241.84:61080/admin/admin_man.html">회원정보</a></li>
+                        `;
+                    } else {
+                        // ✅ 일반 로그인 사용자
+                        navbarMember.innerHTML = `
+                            <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
+                            <li class="navbar_login"><a href="http://58.127.241.84:61080/mypage/mypage.html">마이페이지</a></li>
+                        `;
+                    }
+                } else {
+                    // ✅ 비로그인 상태
+                    navbarMember.innerHTML = `
+                        <li class="navbar_signup"><a href="http://58.127.241.84:61080/member/member_email.html">회원가입</a></li>
+                        <li class="navbar_login"><a href="http://58.127.241.84:61080/member/member_login.html">로그인</a></li>
+                    `;
+                }
+            })
+            .catch(error => console.error("사용자 상태 확인 중 오류 발생:", error));
+    });
+
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("📌 DOMContentLoaded 실행됨!");
+
+    const togglebtn = document.querySelector('.navbar_togglebtn');
+    const menu = document.querySelector('.navbar_menu');
+    const member = document.querySelector('.navbar_member');
+
+    if (togglebtn && menu && member) {
+        togglebtn.addEventListener('click', () => {
+            menu.classList.toggle('active');
+            member.classList.toggle('active');
+        });
+    } else {
+        console.error("❌ HTML 요소를 찾을 수 없습니다.");
+    }
+
+    fetchMembers();  // ✅ 회원 목록 불러오기
 });
 
 let members = [];
@@ -8,11 +59,24 @@ let currentPage = 1;
 
 async function fetchMembers() {
     try {
-        const response = await fetch('http://58.127.241.84:60119/api/admin/get_members');
+        const response = await fetch('http://58.127.241.84:60119/api/admin/get_members', {
+           method: 'GET',
+           credentials: 'include'
+        });
         if (!response.ok) {
             throw new Error(`서버 응답 오류: ${response.status}`);
         }
-        members = await response.json();
+        const data = await response.json();
+        console.log("서버에서 받은 회원 목록:", data);
+
+        // ✅ `members`가 배열인지 확인 후 저장
+        if (Array.isArray(data.members)) {
+            members = data.members;
+        } else {
+            console.error("❌ 서버 응답이 배열이 아님:", data);
+            members = [];  // 오류 방지를 위해 빈 배열 설정
+        }
+
         displayMembers();
         displayPagination();
     } catch (error) {
@@ -72,13 +136,17 @@ async function deleteMember(id) {
     if (!confirm("정말 삭제하시겠습니까?")) return;
 
     try {
+        //console.log("회원 삭제 요청: ID ${id}")'
         const response = await fetch('http://58.127.241.84:60119/api/admin/delete_member', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify({ id: id })
         });
 
         const result = await response.json();
+        console.log("서버 응답:", result);
+
         if (response.ok) {
             alert(result.message);
             await fetchMembers();  // 삭제 후 목록 갱신

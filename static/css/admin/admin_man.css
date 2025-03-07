@@ -130,7 +130,7 @@ a {
     border-radius: 10px;
     border: 2px solid #ddd;
     width: 80%;
-    max-width: 1100px;
+    max-width: 1300px;
     text-align: center;
     height: 900px;
     
@@ -173,11 +173,26 @@ a {
 }
 
 input[type="text"] {
-    width: 90%;
-    padding: 3px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
+      width: 70%;
+      padding: 4px;
+      border: 0;
+      border-radius: 0;
+      margin-top: 4%;
+      outline: none;
+      box-shadow: none;
+      /* 텍스트를 중앙 정렬하고 싶다면: */
+      text-align: center;
+      /* 블록으로 만들어 중앙에 배치하고 싶다면: */
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* (2) 포커스 상태 제거 */
+    input[type="text"]:focus {
+      outline: none;
+      border: none;
+      box-shadow: none;
+    }
 .pagination {
     margin-top: 40px;
 }

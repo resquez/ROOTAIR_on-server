@@ -1,0 +1,169 @@
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("📌 JavaScript 로드 완료!");
+
+    let isPasswordVerified = false; // 비밀번호 확인 여부
+
+    // 🔹 HTML 요소 가져오기
+    const passwordModalpage = document.getElementByClassName("passwordModal_page");
+    const passwordModal = document.getElementById("passwordModal");
+    const passwordInput = document.getElementById("passwordInput");
+    const confirmPasswordBtn = document.getElementById("confirmPasswordBtn");
+    const editFormContainer = document.getElementById("editFormContainer");
+    const updateBtn = document.getElementById("updateBtn");
+    const passwordField = document.getElementById("password");
+    const confirmPasswordField = document.getElementById("confirm_password");
+    const findAddressBtn = document.getElementById("findAddressBtn");
+
+    // 🔹 "비밀번호 확인" 버튼 클릭 시 서버로 검증 요청
+    confirmPasswordBtn.addEventListener("click", function () {
+        const password = passwordInput.value.trim();
+
+        if (!password) {
+            alert("비밀번호를 입력해주세요.");
+            return;
+        }
+
+        console.log("📌 비밀번호 확인 요청 시작...");
+
+        fetch("http://58.127.241.84:60119/api/mypage/verify_password", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include",
+            body: JSON.stringify({ password: password })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("📌 비밀번호 확인 응답:", data);
+
+            if (data.success) {
+                alert("비밀번호 확인 완료!");
+                isPasswordVerified = true;
+		passwordModalpage.st
+                passwordModal.style.display = "none";
+                editFormContainer.style.display = "block"; // 🔹 회원정보 수정 폼 표시
+                loadUserInfo(); // 🔹 회원정보 불러오기
+            } else {
+                alert("비밀번호가 일치하지 않습니다.");
+            }
+        })
+        .catch(error => {
+            console.error("❌ 비밀번호 확인 중 오류 발생:", error);
+            alert("비밀번호 확인 중 오류가 발생했습니다.");
+        });
+    });
+
+    // 🔹 회원정보 불러오기
+    function loadUserInfo() {
+        fetch("http://58.127.241.84:60119/api/mypage/edit", {
+            method: "GET",
+            credentials: "include"
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("📌 서버에서 받은 회원정보:", data);
+            if (data.success) {
+                const user = data.user;
+                document.getElementById("name").value = user.username;
+                document.getElementById("userId").value = user.user_id || "알 수 없음";
+                document.getElementById("phone").value = user.phone_number;
+                document.getElementById("postcode").value = user.postal_code;
+                document.getElementById("address").value = user.address;
+                document.getElementById("extra_address").value = user.add_detail;
+                document.getElementById("email").value = user.email;
+            } else {
+                alert("사용자 정보를 불러오는 데 실패했습니다.");
+            }
+        })
+        .catch(error => console.error("❌ 사용자 정보 로드 중 오류 발생:", error));
+    }
+
+    // 🔹 "주소 찾기" 버튼 클릭 시 Daum 주소 API 실행
+    findAddressBtn.addEventListener("click", function () {
+        console.log("📌 주소 찾기 버튼 클릭됨");
+        new daum.Postcode({
+            oncomplete: function (data) {
+                document.getElementById("postcode").value = data.zonecode;
+                document.getElementById("address").value = data.roadAddress || data.jibunAddress;
+            }
+        }).open();
+    });
+
+    // 🔹 "수정" 버튼 클릭 시 회원정보 수정
+    updateBtn.addEventListener("click", function (event) {
+        event.preventDefault(); // 🔹 기본 폼 제출 방지
+        console.log("📌 '수정' 버튼 클릭됨");
+
+        if (!isPasswordVerified) {
+            alert("비밀번호 확인 후 수정 가능합니다.");
+            console.log("❌ 비밀번호 확인이 되지 않음");
+            return;
+        }
+
+        const newPassword = passwordField.value.trim();
+        const confirmPassword = confirmPasswordField.value.trim();
+        const extraAddress = document.getElementById("extra_address").value.trim();
+        const postalCode = document.getElementById("postcode").value.trim();
+        const address = document.getElementById("address").value.trim();
+
+        console.log("📌 수정 요청 데이터 준비 완료", {
+            password: newPassword,
+            confirm_password: confirmPassword,
+            postal_code: postalCode,
+            address: address,
+            extra_address: extraAddress
+        });
+
+        // 🔹 변경할 데이터 확인
+        const updateData = {};
+
+        // 🔹 비밀번호 변경 처리
+        if (newPassword) {
+            if (newPassword !== confirmPassword) {
+                alert("비밀번호가 일치하지 않습니다.");
+                console.log("❌ 비밀번호가 일치하지 않음");
+                return;
+            }
+            updateData.password = newPassword;
+            updateData.confirm_password = confirmPassword;
+        }
+
+        // 🔹 주소 변경 처리 (주소 찾기 버튼을 눌러 변경한 경우만 업데이트)
+        if (postalCode && address) {
+            updateData.postal_code = postalCode;
+            updateData.address = address;
+        }
+        if (extraAddress) {
+            updateData.extra_address = extraAddress;
+        }
+
+        console.log("📌 최종 서버로 보낼 데이터:", updateData);
+
+        // 🔹 서버로 회원정보 업데이트 요청
+        fetch("http://58.127.241.84:60119/api/mypage/edit", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include",
+            body: JSON.stringify(updateData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("📌 회원정보 수정 응답:", data);
+            if (data.success) {
+                alert("회원정보가 성공적으로 업데이트되었습니다.");
+                window.location.href = "http://58.127.241.84:61080/mypage/mypage.html"; // ✅ 🔹 수정된 경로
+            } else {
+                alert("업데이트 실패: " + data.message);
+                console.log("❌ 업데이트 실패:", data);
+            }
+        })
+        .catch(error => {
+            console.error("❌ 업데이트 중 오류 발생:", error);
+            alert("업데이트 처리 중 오류가 발생했습니다.");
+        });
+    });
+});
+

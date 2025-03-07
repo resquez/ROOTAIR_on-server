@@ -6,57 +6,11 @@
     <title>마이페이지</title>
     <link rel="stylesheet" href="/static/css/mypage/mypage.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script> 
-    <script src="{{ url_for('static', filename='js/mypage/mypage.js') }}" defer></script>
-    <script>
-        const togglebtn = document.querySelector('.navbar_togglebtn');
-        const menu = document.querySelector('.navbar_menu');
-        const member = document.querySelector('.navbar_member');
-    
-        togglebtn.addEventListener('click', ()=>{
-            menu.classList.toggle('active');
-            member.classList.toggle('active');
-        });
-    </script>
-
-    <script>
-        // 네비게이션 스크립트
-    document.addEventListener("DOMContentLoaded", function () {
-        fetch("http://58.127.241.84:60119/api/member/status")
-            .then(response => response.json())
-            .then(data => {
-                const navbarMember = document.getElementById("navbar_member");
-                navbarMember.innerHTML = "";  // 기존 내용 초기화
-
-                if (data.is_authenticated) {
-                    if (data.is_admin) {
-                        // ✅ 관리자 계정
-		                        navbarMember.innerHTML = `
-                            <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
-                            <li class="navbar_login"><a href="http://58.127.241.84:61080/admin/admin_man.html">회원정보</a></li>
-                        `;
-                    } else {
-                        // ✅ 일반 로그인 사용자
-                        navbarMember.innerHTML = `
-                            <li class="navbar_signup"><a href="http://58.127.241.84:60119/api/member/logout">로그아웃</a></li>
-                            <li class="navbar_login"><a href="http://58.127.241.84:61080/mypage/mypage.html">마이페이지</a></li>
-                        `;
-                    }
-                } else {
-                    // ✅ 비로그인 상태
-                    navbarMember.innerHTML = `
-                        <li class="navbar_signup"><a href="http://58.127.241.84:61080/member/member_signup.html">회원가입</a></li>
-                        <li class="navbar_login"><a href="http://58.127.241.84:61080/member/member_login.html">로그인</a></li>
-                    `;
-                }
-            })
-            .catch(error => console.error("사용자 상태 확인 중 오류 발생:", error));
-    });
-    </script>
-
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script src="/static/js/mypage/mypage.js" defer></script>
 </head>
-<!--네비게이션 메뉴 바-->
 <body>
+    <!-- 🔹 네비게이션 메뉴 바 -->
     <nav class="navbar">
         <div class="navbar_logo">
             <a href="http://58.127.241.84:61080/main/main.html">
@@ -66,15 +20,14 @@
         <ul class="navbar_menu">
             <li><a href="http://58.127.241.84:61080/main/main.html">예약</a></li>
             <li><a href="http://58.127.241.84:61080/notices/notices.html">공지사항</a></li>
-            <li><a href="http://58.127.241.84:61080/qna/qna.html">문의사항</a></li>            
+            <li><a href="http://58.127.241.84:61080/qna/qna.html">문의사항</a></li>
         </ul>
         <ul class="navbar_member" id="navbar_member">
             <!-- 로그인 상태에 따라 동적 업데이트 -->
         </ul>
-        <img class="navbar_togglebtn" src="/static/images/topbar.jpg" width="24" height="18"/>
     </nav>
-</body>
-<body>
+
+    <!-- 🔹 사용자 정보 -->
     <section class="user-info">
         <h2>나의 정보</h2>
         <div class="info-box">
@@ -89,7 +42,7 @@
                     <div class="circle deep-blue">
                         <p>총 자산</p>
                         <h2><span id="balance">0</span><span class="unit">원</span></h2>
-                    </div>                    
+                    </div>
                     <div class="circle right-blue">
                         <p>총 잔여 마일리지</p>
                         <h2><span id="mileage">0</span></h2>
@@ -98,17 +51,18 @@
                         <p>예약된 여정</p>
                         <h2 id="flight_cnt">0</h2>
                     </div>
-                </div>        
+                </div>
             </div>
         </div>
     </section>
-    
+
+    <!-- 🔹 항공권 예약 정보 -->
     <section class="ticket-info">
         <h2>항공권 예약 정보</h2>
         <div id="ticket-container">로딩 중...</div>
         <div class="user-buttons">
-            <button class="edit-btn" onclick="location.href='/mypage/edit';">회원 정보 수정</button>
-            <button class="delete-btn" onclick="location.href='/mypage/cancel';">회원 탈퇴</button>
+            <button id="editProfileBtn" class="edit-btn">회원 정보 수정</button>
+            <button id="deleteAccountBtn" class="delete-btn">회원 탈퇴</button>
         </div>
     </section>
 
@@ -135,7 +89,7 @@
                 document.getElementById("mileage").textContent = data.mileage.toLocaleString() || "0";
                 document.getElementById("flight_cnt").textContent = data.flight_cnt || "0";
             })
-            .catch(error => console.error("마이페이지 데이터 로드 오류:", error));
+            .catch(error => console.error("❌ 마이페이지 데이터 로드 오류:", error));
 
             // ✅ 예약된 항공권 정보 가져오기
             fetch("http://58.127.241.84:60119/api/mypage/get_tickets", {
@@ -165,9 +119,26 @@
                     ticketContainer.appendChild(ticketItem);
                 });
             })
-            .catch(error => console.error("항공권 데이터 로드 오류:", error));
+            .catch(error => console.error("❌ 항공권 데이터 로드 오류:", error));
+
+            // ✅ 회원정보 수정 버튼 클릭 시 회원정보 수정 페이지로 이동
+            document.getElementById("editProfileBtn").addEventListener("click", function () {
+                fetch("http://58.127.241.84:60119/api/mypage/edit", {
+                    method: "GET",
+                    credentials: "include"
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.redirect_url) {
+                        window.location.href = data.redirect_url;
+                    } else {
+                        alert("회원정보 수정 페이지로 이동할 수 없습니다.");
+                    }
+                })
+                .catch(error => console.error("❌ 회원정보 수정 이동 오류:", error));
+            });
         });
     </script>
 </body>
-
 </html>
+

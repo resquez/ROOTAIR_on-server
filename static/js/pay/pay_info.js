@@ -57,4 +57,3 @@ function submitPayment() {
         console.error("ERROR: 결제 요청 실패", error);
         alert("결제 요청 중 오류가 발생했습니다.");
     });
-}
