@@ -415,5 +415,6 @@ def check_login_status():
     return jsonify({
         "is_authenticated": True,
         "is_admin": current_user.isadmin,
-        "user_id":current_user.user_id
+        "user_id": current_user.user_id,
+        "username": current_user.username
     })

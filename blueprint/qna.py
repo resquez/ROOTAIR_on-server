@@ -338,48 +338,19 @@ def qna_delete_api(qna_id):
         'redirect_url': url_for('qna.qna_api')
     })
 
-
-# 📌 문의사항 관리자 답변 API
-@qna_bp.route('/comment/<int:qna_id>', methods=['POST'])
-def add_comment(qna_id):
-    """관리자가 문의사항에 답변을 등록하는 API"""
+# 문의사항 관리자 답변
+@qna_bp.route('/qna/<int:qna_id>', methods=['GET'])
+def get_comment(qna_id):
+    """문의사항에 대한 답변을 가져오는 API"""
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # ✅ 관리자라고 가정
-    is_admin = True  # ❗️ 실제 시스템에서는 세션이나 인증으로 체크해야 함
-
-    if not is_admin:
-        return jsonify({'error': '관리자 권한이 필요합니다.'}), 403
-
-    # 요청 데이터 가져오기
-    data = request.get_json()
-    comment = data.get('comment')
-
-    if not comment:
-        return jsonify({'error': '답변을 입력하세요.'}), 400
-
-    # ✅ 해당 문의사항이 존재하는지 확인
-    cursor.execute("SELECT * FROM qna WHERE qna_id = %s", (qna_id,))
+    cursor.execute("SELECT comment FROM qna WHERE qna_id = %s", (qna_id,))
     qna = cursor.fetchone()
 
-    if not qna:
-        conn.close()
-        return jsonify({'error': '문의사항을 찾을 수 없습니다.'}), 404
-
-    # ✅ DB에 답변 업데이트
-    cursor.execute('''
-        UPDATE qna
-        SET comment = %s
-        WHERE qna_id = %s
-    ''', (comment, qna_id))
-
-    conn.commit()
     conn.close()
 
-    print(f"✅ 문의 {qna_id}에 대한 답변이 등록됨: {comment}")  # 로그 확인
-
-    return jsonify({
-        'message': '답변이 성공적으로 등록되었습니다.', 
-        'comment': comment
-    })
+    if qna:
+        return jsonify({'comment': qna['comment']})
+    else:
+        return jsonify({'error': '문의사항을 찾을 수 없습니다.'}), 404
