@@ -32,11 +32,6 @@
     </nav>
 </body>
 
-<div class="image_qna">
-    <img src="/static/images/qna.jpg">
-</div>
-
-
 <body>
     <div class="qna_detail_container">
         <h2>문의사항</h2>
@@ -56,14 +51,14 @@
             <p id="qna_content"></p>
         </div>
 
-        <div class="admin_reply">
-            <h4>관리자 답변</h4>
-            <p id="qna_comment"></p>
-            <div id="admin_reply_container" style="display:none;">
-                <textarea id="admin_reply_input" placeholder="답변을 입력하세요"></textarea>
-                <button id="answerBtn" class="btn answer-btn">답변 등록</button>
-            </div>
-        </div>
+<div class="admin_reply">
+    <h4>관리자 답변</h4>
+    <p id="qna_comment">아직 답변이 없습니다.</p>  <!-- 여기에서 댓글이 표시됨 -->
+    <div id="admin_reply_container" style="display:none;">
+        <textarea id="admin_reply_input" placeholder="답변을 입력하세요"></textarea>
+        <button id="answerBtn" class="btn answer-btn">답변 등록</button>
+    </div>
+</div>
 
         <div class="btn_container">
             <button id="editBtn" class="btn edit-btn" style="display:none;">수정</button>

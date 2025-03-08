@@ -142,11 +142,14 @@ fetch("http://58.127.241.84:60119/api/main/book", {
         return;
     }
     console.log("📢 [JS] API 응답 데이터:", data);
-	window.location.href = data.redirect_url;
+	// ✅ flight_id와 passenger_names를 localStorage에 저장
+        localStorage.setItem("selected_flight_id", flightId);
+        localStorage.setItem("passenger_names", JSON.stringify(engNames));
+        
+        window.location.href = data.redirect_url;
 })
-.catch(error => {
-      console.error("📢 [JS] 예약 요청 오류:", error);
-      alert(`예약 요청 중 오류 발생: ${error.message}`);
+.catch(error => {  // ✅ 오류 발생 시 예외 처리 추가
+    console.error("🚨 [JS] 예약 요청 중 오류 발생:", error);
 });
 });
 });

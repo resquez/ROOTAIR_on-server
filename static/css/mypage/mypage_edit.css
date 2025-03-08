@@ -122,7 +122,11 @@ a {
         border-radius: none;
     }
 }
-
+#editFormContainer {
+    width: 50%; /* 원하는 너비 설정 */
+    margin: 0 auto; /* 수평 중앙 정렬 */
+    text-align: center; /* 내부 콘텐츠 가운데 정렬 */
+}
 label[for="Edit_memberinfo"] {
     display: block; /* 블록 요소로 변경 */
     text-align: center; /* 텍스트 가운데 정렬 */
@@ -130,13 +134,14 @@ label[for="Edit_memberinfo"] {
     font-size: 40px; /* 글자 크기 조정 (선택 사항) */
     font-weight: bold; /* 글자 굵기 조정 (선택 사항) */
     margin-bottom: 5px; /* 아래 간격 추가 */
-    margin: 10px;
+    margin: auto;
+    align-items: center;
 }
 
 .Edit_memberinfo-form-container {
     width: 90%;
-    max-width: 400px;
-    margin: 50px auto;
+    max-width:400px;
+    margin: auto;
     padding: 20px;
     background: white;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -153,6 +158,7 @@ label[for="Edit_memberinfo"] {
     align-items: flex-start; /* 왼쪽 정렬 */
     width: 100%;
     max-width: 350px; /* 입력 필드 크기 조정 */
+    margin:auto;
     margin-bottom: 15px; /* 입력 필드 간격 조정 */
 }
 
@@ -229,7 +235,7 @@ button:hover,
 
 /* 비밀번호 확인 페이지: 전체 화면을 차지하며 스크롤 없음 */
 #passwordModal_page {
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     display: flex;
     justify-content: center; /* 가로 중앙 정렬 */

@@ -76,10 +76,15 @@ function fetchInquiryList(page = 1) {
             //console.log("🔥 [DEBUG] 전체 문의 API 응답:", data);
             displayInquiryList(data.qna);
             createPaginationButtons(data.total_pages, page, "all");
-        })
-        .catch(error => console.error(`"🔥 [ERROR] 전체 문의 데이터를 불러오는 중 오류 발생:", error`));
-
+	})
+        .catch(error =>{
+		alert("로그인 하셔야합니다.");
+		window.location.href = "http://58.127.241.84:61080/member/member_login.html";
+		console.error("🚨 문의사항 로드 오류:", error);
+	});
 }
+
+
 
 // ✅나의 문의 불러오기
 function fetchMyInquiryList(page = 1) {

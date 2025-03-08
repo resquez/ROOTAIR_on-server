@@ -74,6 +74,21 @@ function renderFlights() {
         `;
 
         flightList.appendChild(flightItem);
+        // ✅ 체크박스 하나만 선택 가능하도록 이벤트 리스너 추가
+        const checkbox = flightItem.querySelector(".flight-checkbox");
+        checkbox.addEventListener("change", checkOneCheckbox);
+    });
+}
+// ✅ 체크박스를 하나만 선택하도록 하는 함수
+function checkOneCheckbox(event) {
+    // 모든 체크박스를 가져옴
+    const checkboxes = document.querySelectorAll(".flight-checkbox");
+
+    // 현재 클릭한 체크박스를 제외한 나머지를 해제
+    checkboxes.forEach(checkbox => {
+        if (checkbox !== event.target) {
+            checkbox.checked = false;
+        }
     });
 }
 

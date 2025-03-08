@@ -95,46 +95,53 @@ function loadQnaDetail() {
     });
 }
 
-//  관리자 답변
 document.addEventListener("DOMContentLoaded", function () {
-//    const isAdmin = true;  // ✅ JavaScript에서는 `true`로 써야 함
+    // URL에서 경로에 포함된 qnaId 값 가져오기
+    const pathParts = window.location.pathname.split('/');
+    const qnaId = pathParts[pathParts.length - 1];  // 마지막 부분에서 qnaId를 가져옵니다.
+
+    if (!qnaId) {
+        console.error("qnaId가 URL 경로에 제공되지 않았습니다.");
+        return;
+    }
+
     const answerBtn = document.getElementById("answerBtn");
     const replyInput = document.getElementById("admin_reply_input");
-    const replyText = document.getElementById("admin_reply_text");
-   // const qnaId = urlParams.get('id');
+    const replyText = document.getElementById("qna_comment");  // 댓글을 표시할 위치
+    const adminReplyContainer = document.getElementById("admin_reply_container");
 
-    // ✅ 관리자일 경우 textarea와 버튼 보이게 설정
-
-    fetch("http://58.127.241.84:60119/api/member/status", {  // ⭐️ 관리자 여부 체크
+    // 관리자 확인 (기존 코드)
+    fetch("http://58.127.241.84:60119/api/member/status", {  // 관리자 여부 체크
             method: "GET",
             credentials: "include"
         })
         .then(response => response.json())
         .then(data => {
-            if (data.is_admin) {  // ⭐️ 관리자면 버튼, 입력창 보여주기
+            if (data.is_admin) {  // 관리자면 버튼, 입력창 보여주기
                 replyInput.style.display = "block";
                 answerBtn.style.display = "block";
-            }
-        });    fetch("http://58.127.241.84:60119/api/member/status", {  // ⭐️ 관리자 여부 체크
-            method: "GET",
-            credentials: "include"
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.is_admin) {  // ⭐️ 관리자면 버튼, 입력창 보여주기
-                replyInput.style.display = "block";
-                answerBtn.style.display = "block";
+                // 관리자라면 답변을 작성할 수 있게끔 보여주지만, GET 요청으로 댓글 불러오기
+                loadComment(qnaId);  // 댓글 불러오는 함수 호출
             }
         });
 
-    // ✅ "답변 등록" 버튼 클릭 이벤트
+    // GET 요청을 통해 DB에서 댓글을 불러와서 표시
+    function loadComment(qnaId) {
+        fetch(`http://58.127.241.84:60119/api/qna/${qnaId}`)  // 댓글을 불러오는 GET 요청
+            .then(response => response.json())
+            .then(data => {
+                if (data.comment) {
+                    replyText.textContent = data.comment;  // 댓글 내용 표시
+                } else {
+                    replyText.textContent = "아직 답변이 없습니다.";  // 답변이 없으면 기본 문구
+                }
+            })
+            .catch(error => console.error("댓글 로드 오류:", error));
+    }
+
+    // "답변 등록" 버튼 클릭 시
     if (answerBtn) {
         answerBtn.addEventListener("click", function () {
-            if (!qnaId) {
-                alert("문의 ID를 찾을 수 없습니다.");
-                return;
-            }
-
             const comment = replyInput.value.trim();
             if (!comment) {
                 alert("답변을 입력하세요.");
@@ -152,6 +159,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     alert(data.message);  // ✅ 성공 메시지 알림
                     replyText.textContent = data.comment; // ✅ UI 업데이트
                     replyInput.value = ""; // ✅ 입력창 초기화
+                    adminReplyContainer.style.display = "none"; // 답변 입력창 숨기기
                 } else {
                     alert("답변 등록 실패: " + (data.error || "알 수 없는 오류"));
                 }

@@ -3,25 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // ✅ GET 파라미터에서 데이터 가져오기
     const urlParams = new URLSearchParams(window.location.search);
-
     console.log("✅ DEBUG: GET 파라미터 =", Object.fromEntries(urlParams.entries())); // 🔥 GET 데이터 확인
-
-    if (!urlParams.has("total_price")) {
-        alert("🚨 ERROR: pay_info에서 GET 파라미터가 없습니다! 부모 창의 URL을 확인하세요.");
-    } else {
-        alert("✅ pay_info에서 GET 파라미터를 정상적으로 받았습니다.");
-    }
-
-    console.log("total_price:", urlParams.get("total_price"));
-    console.log("user_id:", urlParams.get("user_id"));
-    console.log("username:", urlParams.get("username"));
-    console.log("eng_name:", urlParams.get("eng_name"));
-    console.log("mileage_used:", urlParams.get("mileage_used"));
-    console.log("final_mileage:", urlParams.get("final_mileage"));
-    console.log("used_rootpay:", urlParams.get("used_rootpay"));
-    console.log("remaining_balance:", urlParams.get("remaining_balance"));
-    console.log("passenger_count:", urlParams.get("passenger_count"));
-    console.log("flight_id:", urlParams.get("flight_id"));
 
     // ✅ HTML 요소 업데이트
     document.getElementById("display_total_price").textContent = 
@@ -30,22 +12,22 @@ document.addEventListener("DOMContentLoaded", function () {
     // ✅ 숨겨진 input 필드 자동 설정
     let form = document.getElementById("paymentInfoForm");
 
-    // form.elements["username"].value = urlParams.get("username") || "Unknown User";
-    // form.elements["eng_name"].value = urlParams.get("eng_name") || "N/A";
-    // form.elements["airplane_name"].value = urlParams.get("airplane_name") || "Unknown Flight";
-    // form.elements["seat_class"].value = urlParams.get("seat_class") || "Economy";
-    // form.elements["passenger_count"].value = urlParams.get("passenger_count") || "1";
-    // form.elements["total_price"].value = urlParams.get("total_price") || "0";
-    // form.elements["email"].value = urlParams.get("email") || "example@email.com";
-    // form.elements["mileage_used"].value = urlParams.get("mileage_used") || "0";
-    // form.elements["used_rootpay"].value = urlParams.get("used_rootpay") || "0";
+    form.elements["username"].value = urlParams.get("username") || "Unknown User";
+    form.elements["eng_name"].value = urlParams.get("eng_name") || "N/A";
+   // form.elements["airplane_name"].value = urlParams.get("airplane_name") || "Unknown Flight";
+   // form.elements["seat_class"].value = urlParams.get("seat_class") || "Economy";
+    form.elements["passenger_count"].value = urlParams.get("passenger_count") || "1";
+    form.elements["total_price"].value = urlParams.get("total_price") || "0";
+   // form.elements["email"].value = urlParams.get("email") || "example@email.com";
+    form.elements["mileage_used"].value = urlParams.get("mileage_used") || "0";
+    form.elements["used_rootpay"].value = urlParams.get("used_rootpay") || "0";
 
     // ✅ `flight_id`와 `user_id`가 URL에서 존재하는 경우 API 호출
     const flightId = urlParams.get("flight_id");
     const userId = urlParams.get("user_id");
 
     if (flightId && userId) {
-        fetch(`http://58.127.241.84:60119/api/pay_info?flight_id=${flightId}&user_id=${userId}`)
+        fetch(`http://58.127.241.84:60119/api/pay/pay_info?flight_id=${flightId}&user_id=${userId}`)
             .then(response => response.json())
             .then(data => {
                 console.log("✅ DEBUG: API 응답 데이터 =", data);
@@ -56,14 +38,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.getElementById("departure_time_debug").textContent = data.departure_time;
 
                 // ✅ 숨겨진 input 필드 업데이트
-                // document.getElementById("departure_time").value = data.departure_time;
-                // document.getElementById("arrival_time").value = data.arrival_time;
+                document.getElementById("departure_time").value = data.departure_time;
+                document.getElementById("arrival_time").value = data.arrival_time;
                 document.getElementById("flight_id").value = data.flight_id;
-                // document.getElementById("user_id").value = data.user_id;
+                document.getElementById("user_id").value = data.user_id;
                 document.getElementById("total_price").value = data.total_price;
-                // document.getElementById("passenger_count").value = data.passenger_count;
-                // document.getElementById("email").value = data.email;
-                // document.getElementById("eng_name").value = data.eng_name;
+                document.getElementById("passenger_count").value = data.passenger_count;
+               // document.getElementById("email").value = data.email;
+                document.getElementById("eng_name").value = data.eng_name;
                 document.getElementById("final_mileage").value = data.final_mileage;
                 document.getElementById("remaining_balance").value = data.remaining_balance;
             })
@@ -85,22 +67,23 @@ function submitPayment() {
 
     // ✅ 필수 값 확인 (누락된 값이 있는지 체크)
     let requiredFields = [
-        "total_price", "final_mileage",
-        "remaining_balance", "flight_id"
+        "total_price", "user_id", "username", "eng_name",
+        "mileage_used", "final_mileage", "used_rootpay",
+        "remaining_balance", "passenger_count", "flight_id"
     ];
     
-    // let missingFields = [];
-    // requiredFields.forEach(field => {
-    //     if (!formData.get(field)) {
-    //         missingFields.push(field);
-    //     }
-    // });
+    let missingFields = [];
+    requiredFields.forEach(field => {
+        if (!formData.get(field)) {
+            missingFields.push(field);
+        }
+    });
 
-    // if (missingFields.length > 0) {
-    //     alert(`❌ 필수 데이터가 누락되었습니다: ${missingFields.join(", ")}`);
-    //     console.error(`🚨 ERROR: 필수 데이터 누락 - ${missingFields.join(", ")}`);
-    //     return;
-    // }
+    if (missingFields.length > 0) {
+        alert(`❌ 필수 데이터가 누락되었습니다: ${missingFields.join(", ")}`);
+        console.error(`🚨 ERROR: 필수 데이터 누락 - ${missingFields.join(", ")}`);
+        return;
+    }
 
     console.log("✅ DEBUG: 전송할 formData 데이터:");
     for (let pair of formData.entries()) {

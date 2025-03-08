@@ -176,10 +176,19 @@ document.getElementById("nextPage").addEventListener("click", () => {
 // 검색 기능
 function searchMembers() {
     const input = document.getElementById("searchInput").value.toLowerCase();
-    const rows = document.querySelectorAll("#memberTable tr");
+    const rows = document.querySelectorAll("#memberTable tr"); // thead 포함
 
     rows.forEach(row => {
-        const rowText = row.innerText.toLowerCase();
-        row.style.display = rowText.includes(input) ? "" : "none";
+        const inputs = row.querySelectorAll("input");
+        let rowText = "";
+
+        // 각 입력 필드(input)에서 값을 가져와 하나의 문자열로 만듦
+        inputs.forEach(inputField => {
+            rowText += inputField.value.toLowerCase() + " ";
+        });
+
+        // 검색어 포함 여부 확인 후 표시/숨김 처리
+        row.style.display = input === "" || rowText.includes(input) ? "" : "none";
     });
 }
+

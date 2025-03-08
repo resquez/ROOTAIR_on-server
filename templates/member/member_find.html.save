@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>비밀번호 찾기</title>
+    <link rel="stylesheet" href="/static/css/member/member_find.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <script src="/static/js/member/member_find.js"></script>
+</head>
+<!--네비게이션 메뉴 바-->
+<body>
+    <nav class="navbar">
+        <div class="navbar_logo">
+            <a href="http://58.127.241.84:61080/main/main.html">
+                <img src="/static/images/rootair.jpg"/>
+            </a>
+        </div>
+        <ul class="navbar_menu">
+            <li><a href="http://58.127.241.84:61080/main/main.html">예약</a></li>
+            <li><a href="http://58.127.241.84:61080/notices/notices.html">공지사항</a></li>
+            <li><a href="http://58.127.241.84:61080/qna/qna.html">문의사항</a></li>            
+        </ul>
+        <ul class="navbar_member" id="navbar_member">
+            <!-- 로그인 상태에 따라 동적 업데이트 -->
+        </ul>
+    </nav>
+</body>
+<body>
+    <div class="find_passwd_page">
+        <div class="find_passwd_box">
+            <label for="find_passwd_label">비밀번호 찾기</label>
+
+            <!-- Step 1: 아이디 입력 -->
+            <form id="step1_form">
+                <div id="step1"> 가입하신 아이디를 입력해주세요
+                    <input type="text" id="user_id" name="user_id" placeholder="아이디 입력">
+                    <button type="button" onclick="requestResetCode()">인증코드 요청</button>
+                    <p id="step1Message" class="message"></p> 
+                </div>
+            </form>
+
+            <!-- Step 2: 인증 코드 입력 -->
+            <form id="step2_form" class="hidden">
+                <div id="step2">가입하신 이메일로 인증코드를 발송하였습니다.
+                    <input type="text" id="otp" name="otp" placeholder="인증코드 입력">
+                    <button type="button" onclick="verifyResetCode()">인증코드 확인</button>
+                    <p id="step2Message" class="message"></p> 
+                </div>
+            </form>
+
+            <!-- Step 3: 새 비밀번호 입력 -->
+            <form id="step3_form" class="hidden">
+                <div id="step3">
+                    <input type="password" id="new_password" name="password" placeholder="새 비밀번호">
+                    <input type="password" id="confirm_password" name="password_confirm" placeholder="새 비밀번호 확인">
+                    <button type="button" id="newpw" onclick="resetPassword(event)" >비밀번호 재설정</button>
+                    <p id="step3Message" class="message"></p> 비밀번호 재설정하세요
+                </div>
+            </form>
+        </div>
+    </div>
+</body>

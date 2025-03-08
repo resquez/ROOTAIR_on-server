@@ -25,7 +25,6 @@ a {
     justify-content: center;
     align-items: center;
 }
-
 .navbar_logo img {
     margin-left: 150px;
     width: 210px;
@@ -46,7 +45,6 @@ a {
     background-color: #e3dede;
     border-radius: 10px;
 }
-
 .navbar_member {
     display: flex;
     list-style: none;
@@ -78,7 +76,6 @@ a {
     right: 32px;
     font-size: 24px;
 }
-
 @media screen and (max-width: 1040px) {
     .navbar {
         flex-direction: column;
@@ -123,385 +120,265 @@ a {
         border-radius: none;
     }
 }
-
-/* 메인 컨테이너 */
 .container {
     display: flex;
     justify-content: space-between;
-    width: 90%;
+    padding: 40px;
     max-width: 1200px;
     margin: auto;
-    padding: 20px;
 }
 
-/* 왼쪽 & 오른쪽 레이아웃 */
 .left-section {
-    width: 65%;
-}
-.right-section {
-    width: 30%;
+    width: 60%;
 }
 
-/* 기본 박스 스타일 */
+.right-section {
+    width: 35%;
+}
+
 .box {
-    background: white;
+    background: #fff;
     padding: 15px;
     margin-bottom: 15px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.17);
+    
 }
 
+/* 제목 */
 h2 {
     font-size: 18px;
-    border-bottom: 2px solid #ddd;
-    padding-bottom: 5px;
-}
-
-/* 최종 결제 금액 정렬 */
-.final-amount-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 10px;
-    color: red;
-}
-
-/* 결제 금액 스타일 */
-.final-price {
-    display: flex;
-    align-items: center;
-    gap: 5px;
     font-weight: bold;
 }
 
-/* 버튼 스타일 */
-.button-section {
-    text-align: center;
-    margin-top: 20px;
-}
-
-button {
-    padding: 10px 15px;
-    font-size: 16px;
-    margin: 5px;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-}
-
-#pay-button, #cancel-button {
-    background: #333;
-    color: white;
+/* ✈ 항공권 선택 내역 */
+.ticket-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     width: 100%;
 }
 
-/* 마일리지 박스 */
-.mileage-section {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-/* 마일리지 정보 정렬 */
-.mileage-info {
+.ticket {
     display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 10px;
-
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    text-align: center;
 }
 
-/* 마일리지 입력 필드 */
-.mileage-input-wrapper {
+/* 공항 코드 스타일 */
+.departure-container strong,
+.arrival-container strong {
+    font-size: 27px; /* 가장 큰 글씨 */
+    font-weight: bold;
+}
+
+.departure-container p:first-of-type,
+.arrival-container p:first-of-type {
+    font-size: 12px; /* 날짜 크기 */
+}
+
+.departure-container p:last-of-type,
+.arrival-container p:last-of-type {
+    font-size: 12px; /* GMT 시간 크기 */
+    color: gray;
+}
+
+/* 비행 경로 */
+.flight-line-dashed {
+    flex-grow: 1;
+    border-top: 2px dashed #bbb;
+    margin: 0 15px;
+}
+
+.flight-line-solid {
+    flex-grow: 1;
+    border-top: 2px solid #bbb;
+    margin: 0 15px;
+}
+
+/* 비행기 아이콘 */
+.airplane-icon {
+    font-size: 30px;
+}
+
+/* 이코노미 & 1명 세로 정렬 */
+#class-info {
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 16px;
+    font-weight: bold;
+}
+/* ✈ 마일리지 영역 */
+.mileage-info, .mileage-input-wrapper {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #fff; /* 배경색 */
-    padding: 8px 12px;
-    border-radius: 12px; /* 둥근 모서리 */
-    border: 1px solid #ddd;
-    font-size: 14px;
-    color: #333;
-    width: 97%; /* 원하는 크기로 조절 */
 }
+
 
 .mileage-input-wrapper input {
-    border: none; /* 기본 테두리 제거 */
-    background: transparent; /* 배경 투명하게 */
-    font-size: 14px;
-    color: #333;
-    text-align: right; /* 숫자를 오른쪽 정렬 */
-    width: 100px; /* 입력창 크기 조정 */
-    outline: none; /* 클릭 시 파란 테두리 제거 */
+    width: 80px;
+    padding: 5px;
+    text-align: right;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s ease;
 }
-
-.mileage-input-wrapper input::placeholder {
-    color: #aaa; /* 플레이스홀더 색상 연하게 */
-}
-/* 크롬, 사파리, 엣지 등 웹킷 기반 브라우저 */
-.mileage-input-wrapper input::-webkit-outer-spin-button,
-.mileage-input-wrapper input::-webkit-inner-spin-button {
+/* 크롬, 사파리, 엣지 (Webkit 브라우저) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
-/* 마일리지 적용 버튼*/
-#apply-mileage {
-    background-color: #333; /* 버튼 배경색 (파란색) */
-    color: white; /* 글자색 */
-    font-size: 16px; /* 글자 크기 */
-    font-weight: bold; /* 글자 굵기 */
-    padding: 12px 20px; /* 안쪽 여백 */
-    border: none; /* 기본 테두리 제거 */
-    border-radius: 8px; /* 모서리 둥글게 */
-    cursor: pointer; /* 마우스 오버 시 포인터 변경 */
-    transition: background-color 0.3s ease, transform 0.2s ease; /* 부드러운 효과 추가 */
-    width: 100%; /* 버튼을 부모 요소의 전체 너비로 설정 */
-    text-align: center; /* 텍스트 중앙 정렬 */
-    display: block; /* 버튼을 블록 요소로 설정 */
-    margin-top: 10px; /* 버튼과 위 요소 간 간격 */
+
+
+.mileage-input-wrapper input:hover {
+    border-color: #666;
 }
-
-
-#apply-mileage:active {
-    background-color: #555; /* 클릭 시 색 변경 */
-    transform: scale(0.95); /* 클릭할 때 살짝 축소 */
+button#apply-mileage {
+    font-size: 16px;
+    font-weight: bold;
+    width: 100%;
+    padding: 8px;
+    background: #333;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-top: 25px;
 }
-
-
-
-
-
-/* 결제 수단 박스 */
-.payment-method {
-    padding: 15px;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+button#apply-mileage:hover {
+    background: #555;
 }
-
-/* 결제 수단 버튼 */
+/* ✈ 결제 수단 */
 .payment-row {
     display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 10px;
+    justify-content: space-between; /* 좌우 정렬 */
+    font-size: 14px;
+    margin 8px 0;
 }
 
 .payment-item {
-    flex: 1;
-    background: #ddd;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-/* 선택된 결제 수단 */
-.payment-item.selected {
-    background: #fff !important;
-    color: #555;
-    font-weight: bold;
-    border: 2px solid #005ecb !important;
-}
-/* 마일리지 컨테이너 */
-.mileage-container {
-    width: 100%;
-    max-width: 400px;
-    margin: 20px auto;
-    font-family: 'Noto Sans KR', sans-serif;
-}
-
-.mileage-box {
-    background: #fff;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* 마일리지 항목 정렬 */
-.mileage-item {
-    display: flex;
-    justify-content: space-between; /* 좌우 정렬 */
-    align-items: center; /* 세로 중앙 정렬 */
-    font-size: 16px;
-    padding: 5px 0;
-    gap:5px;
-}
-
-.mileage-item span:first-child {
-    text-align: left;  /* 왼쪽 정렬 */
-    flex: 1; /* 첫 번째 span이 왼쪽 정렬되도록 설정 */
-}
-
-.mileage-item span:last-child {
-    text-align: right; /* 오른쪽 정렬 */
-    font-weight: bold; /* 숫자 강조 */
-    min-width: 100px; /* 숫자 최소 너비 설정 (정렬 유지) */
-}
-
-.mileage-item:last-child {
-    margin-bottom: 0;
-}
-
-.mileage-item span:last-child {
-    font-weight: bold;
-}
-/* 결제 상세 정보 - ROOT PAY */
-#rootpay-section p,
-.final-payment-container p {
-    display: flex;
-    justify-content: space-between; /* 좌우 정렬 */
-    align-items: center; /* 세로 중앙 정렬 */
-    font-size: 16px;
-    padding: 5px 0;
-    width: 100%; /* 전체 너비 사용 */
-}
-
-/* 왼쪽 텍스트 (예: ROOT PAY 잔액) */
-#rootpay-section p span:first-child,
-.final-payment-container p span:first-child {
-    text-align: left; /* 왼쪽 정렬 */
-    flex: 1; /* 너비 자동 조정 */
-}
-
-/* 오른쪽 숫자 */
-#rootpay-section p span:last-child,
-.final-payment-container p span:last-child {
-    text-align: right; /* 오른쪽 정렬 */
-    font-weight: bold; /* 강조 */
-    min-width: 100px; /* 최소 너비 설정 */
-}
-
-/* KRW 텍스트 위치 조정 */
-#rootpay-section p span.currency,
-.final-payment-container p span.currency {
-    margin-left: -60px; /* 숫자와 간격 추가 */
-    font-weight: normal; /* KRW는 강조 안 함 */
-}
-
-#payment-popup {
-    display: none; /* 기본적으로 숨김 */
-}
-.total-amount-box {
-    background: #e9e9e9; /* 박스 배경색 (연한 회색) */
-    padding: 10px 15px; /* 내부 여백 */
-    border-radius: 8px; /* 모서리를 둥글게 */
-    display: inline-block; /* 내용 크기에 맞춰 크기 조정 */
-    font-size: 16px; /* 글자 크기 */
-    font-weight: bold; /* 글자 두께 */
-    color: #333; /* 글자 색 (진한 회색) */
-    }
-.popup-content {
-    width:100%;
-    background: #ffffff;
-    padding: 40px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    width: 84%;
-    height:80%;
-    max-width: 700px;
-    text-align: center;
-}
-h2 {
-    font-size: 24px;
-    color: #333;
-}
-    
-
-.checkbox {
-    margin-top:20px;
-    margin-bottom: 20px;
-}
-
-.checkbox {
-    display: flex;
-    justify-content: center; /* 가로 중앙 정렬 */
-    align-items: center; /* 세로 중앙 정렬 */
-    gap: 10px; /* 체크박스와 라벨 사이 간격 */
-    font-size: 16px;
-    color: #333;
-    cursor: pointer;
-    width: 100%; /* 부모 요소를 기준으로 중앙 정렬 */
-}
-
-/* 기본 체크박스 숨기기 */
-.checkbox input[type="checkbox"] {
-    display: none;
-}
-
-/* 커스텀 체크박스 디자인 */
-.checkbox label {
-    display: flex;
-    align-items: center;
-    position: relative;
-    padding-left: 30px; /* 체크박스 공간 확보 */
-    cursor: pointer;
-}
-
-/* 체크박스의 네모 박스 */
-.checkbox label::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    border-radius: 4px;
+    width: 48%;
+    font-size: 20px;
+    padding: 10px;
     border: 2px solid #333;
-    background: #fff;
-    transition: all 0.2s ease-in-out;
-}
-
-/* 체크박스가 체크되었을 때 */
-.checkbox input[type="checkbox"]:checked + label::before {
-    background: #333;
-    border-color: #333;
-    content: "✔";
-    font-size: 14px;
-    color: white;
-    text-align: center;
-    line-height: 20px;
-}
-
-/* 체크박스 호버 효과 */
-.checkbox label:hover::before {
-    border-color: #555;
-}
-
-/* 체크박스 선택 시 강조 */
-.checkbox input[type="checkbox"]:focus + label::before {
-    outline: 2px solid #333;
-}
-
-/* 버튼 스타일 */
-.confirm-btn, .close-btn {
-    padding: 12px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
+    background-color: #f5f5f5;
     cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+}
+.payment-item:hover {
+    background-color: #ddd;
+}
+
+.payment-item p {
+    margin: 0;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* ✈ 결제 상세 및 마일리지 혜택 */
+#rootpay-section p span:last-child,
+.final-payment-container p span:last-child,
+#rootpay-section p sapn: {
+    margin-left: 10px;
+    gap: 7px;
+}
+/* ✈ 버튼 스타일 */
+.button-section {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+#pay-button, #cancel-button {
+    width: 48%;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
     transition: background 0.3s ease;
 }
 
-.confirm-btn {
-    background-color: #333;
-    color: white;
-    margin-right: 10px;
-}
-
-.confirm-btn:hover {
-    background-color: #555;
-}
-
-.close-btn {
+#pay-button {
     background-color: #333;
     color: white;
 }
 
-.close-btn:hover {
+#cancel-button {
+    background-color: #ccc;
+}
+#pay-button:hover {
     background-color: #555;
+}
+#cancel-button:hover {
+    background-color: #bbb;
+}
+/* 📌 ROOT PAY 잔액과 500000 KRW를 같은 줄에 정렬 */
+.only-rootpay {
+    display: flex;
+    justify-content: space-between;  /* 양쪽 정렬 */
+    align-items: center;
+    margin: 8px 0;
+}
+.only-rootpay .value {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-grow: 1;  /* 숫자가 오른쪽으로 정렬되도록 확장 */
+    min-width: 120px; /* 줄 바꿈 방지 */
+    text-align: right;
+    gap: 5px; /* 숫자와 KRW 간격 조정 */
+}
+✈ 탑승자별 운임 내역 스타일 */
+.passenger-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* 각 탑승자 정보 간격 조정 */
+    padding: 10px 0;
+}
+
+.passenger-item {
+    display: flex;
+    justify-content: space-between; /* 탑승자 정보와 운임을 양 끝 정렬 */
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #ddd;
+}
+.passenger-name {
+    border-bottom: none;
+}
+
+.passenger-name {
+    font-weight: bold;
+}
+
+.passenger-fare {
+    color: #333;
+    font-weight: bold;
+}
+#final-payment {
+    text-align: right;
+    color: red;
+    font-size: 20px;
+}
+.mileage-item {
+    display: flex;
+    justify-content: space-between;
+}
+#rootpay-section p, .final-payment-container p {
+    display: flex;
+    justify-content: space-between;
+}
+#rootpay-balance {
+    margin-left: 50px;
+    margin-right: 50px;
 }

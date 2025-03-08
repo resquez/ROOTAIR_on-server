@@ -6,12 +6,12 @@
     <title>결제</title>
     <link rel="stylesheet" href="/static/css/pay/pay.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script> 
-    <script src="https://stdpay.inicis.com/stdjs/INIStdPay.js"></script> 
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script src="https://stdpay.inicis.com/stdjs/INIStdPay.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
 </head>
-
+<body>
 <!--네비게이션 메뉴 바-->
 <body>
     <nav class="navbar">
@@ -30,21 +30,33 @@
         </ul>
     </nav>
 </body>
-   <div class="container">
+<body>
+    <div class="container">
         <div class="left-section">
             <div class="box">
                 <h2>항공권 선택 내역</h2>
-                <div id="flight-info"></div>
+                <div class="ticket-container">
+                    <div class="ticket">
+                        <div class="departure-container">
+			<strong id="departure"></strong>
+                        <p id="departure-date"></p>
+			</div>
+ 			<span class="flight-line-dashed"></span>
+                        <div class="airplane-icon">🛫</div>
+			<span class="flight-line-solid"></span>
+			<div class="arrival-container">
+                        <strong id="arrival"></strong>
+                        <p id="arrival-date"></p>
+			</div>
+                        <p id="class-info"></p>
+                    </div>
+                </div>
             </div>
 
             <div class="box">
                 <h2>탑승자별 운임 내역</h2>
-                <div id="fare-info"></div>
-                <div class="final-amount-container">
-                    <p class="final-amount">총 운임:</p>
-                    <div class="final-price">
-                        <span id="final-amount"></span> KRW
-                    </div>
+                <div class="passenger-list-container" id="passenger-list">
+                    <!-- JavaScript로 동적으로 추가 -->
                 </div>
             </div>
 
@@ -53,13 +65,15 @@
                 <div class="mileage-info">
                     <p>보유 마일리지</p>
                     <div class="mileage-value">
-                        <span id="total-mileage"></span> 마일리지
+                        <span id="total-mileage"></span> M
                     </div>
                 </div>
                 <div class="mileage-input-wrapper">
-                    <label for="mileage-input">사용</label>
-                    <input type="number" id="mileage-input" placeholder="0">
-                </div>
+                    	<label for="mileage-input">사용</label>
+		    <div class="mileage-use">
+                    	<input type="number" id="mileage-input" placeholder="0"> M
+                    </div>
+		</div>
                 <button id="apply-mileage">마일리지 적용</button>
             </div>
         </div>
@@ -76,53 +90,45 @@
             <div class="box">
                 <h2>결제 상세</h2>
                 <div id="rootpay-section">
-                    <p>
-                        <span>ROOT PAY 잔액</span>
-                        <span id="rootpay-balance"></span>
-                        <span class="currency"></span>
-                    </p>
-                    <p>
-                        <span>사용 마일리지</span>
-                        <span id="mileage-used"></span>
-                        <span class="currency">M</span>
-                    </p>
+                    <p><span>ROOT PAY 잔액</span> 
+				<span id="rootpay-balance"></span><span class="currency">KRW</span></p>
+                    <p><span>사용 마일리지</span> 
+				<span id="mileage-used"></span> <span class="currency">M</span></p>
                 </div>
                 <div class="final-payment-container">
-                    <p>
-                        <span>최종 결제 금액</span>
-                        <span id="final-payment"></span>
-                        <span class="currency">KRW</span>
-                    </p>
-                </div>
-
+                    <p><span>최종 결제 금액</span> 
+				<span id="final-payment"></span> <span class="currency">KRW</span></p>
+		</div>
             </div>
-
-            <div class="mileage-container">
-                <h2>마일리지 혜택</h2>
-                <div class="mileage-box">
-                    <div class="mileage-item">
-                        <span>현재 마일리지</span> <span id="current-mileage"></span> 마일리지
-                    </div>
-                    <div class="mileage-item">
-                        <span>적립 마일리지</span> <span id="earned-mileage"></span> 마일리지
-                    </div>
-                    <div class="mileage-item">
-                        <span>결제 시 보유 마일리지</span> <span id="total-mileage-final"></span> 마일리지
-                    </div>
-                </div>
+            
+            <div class="box">
+              <div class="mileage-container">
+                  <h2>마일리지 혜택</h2>
+                  <div class="mileage-box">
+                      <div class="mileage-item">
+				<span>현재 마일리지</span><span id="current-mileage"></span> M
+		      </div>
+                      <div class="mileage-item">
+				<span>적립 마일리지</span> 
+					<span id="earned-mileage"></span> M
+		      </div>
+                      <div class="mileage-item">
+				<span>결제 시 보유 마일리지</span> 
+					<span id="total-mileage-final"></span> M
+		      </div>
+                  </div>
+              </div>
             </div>
-
             <div class="button-section">
                 <button id="pay-button">결제</button>
                 <button id="cancel-button">취소</button>
             </div>
-            <input type="hidden" id="flight_id" value="flight_id "/>
-            <input type="hidden" id="passenger_count" value="passenger_count "/>
-            <input type="hidden" id="user_id" value="user_id ">
-            <input type="hidden" id="username" value="username ">
-            <input type="hidden" id="eng_name" value="eng_name">
         </div>
     </div>
+    <input type="hidden" id="final-amount" value="0">
+    <input type="hidden" id="passenger_count" value="0">
+    <input type="hidden" id="passenger_names" value="0">
+
     <script src="/static/js/pay/pay.js"></script>
 </body>
 </html>

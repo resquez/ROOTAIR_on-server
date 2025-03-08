@@ -1038,27 +1038,35 @@ a {
   font-weight: 800; /* 보통 두께 */
 
 }
-
 .flight-segment {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
-  row-gap: 4px; /* 줄 간격 조절 */
+  grid-template-columns: auto auto; /* 2개의 컬럼 (날짜+시간 | 공항) */
+  grid-template-rows: auto auto; /* 2개의 행 */
+  align-items: center; /* 요소 수직 중앙 정렬 */
+  column-gap: 10px; /* 컬럼 간격 */
 }
 
 .flight-segment .date {
-  grid-column: 1 / span 2; /* 첫 번째 줄 전체 사용 */
+  grid-column: 1; /* 첫 번째 열 */
+  grid-row: 1; /* 첫 번째 행 */
+  font-size: 14px; /* 날짜 폰트 크기 */
 }
 
 .flight-segment .time {
-  grid-column: 1; /* 두 번째 줄 왼쪽 */
-  font-size: 16px;            /* 폰트 크기 */
+  grid-column: 1; /* 첫 번째 열 */
+  grid-row: 2; /* 두 번째 행 */
+  font-size: 18px; /* 시간 폰트 크기 */
+  font-weight: bold;
 }
 
 .flight-segment .airport {
-  grid-column: 2; /* 두 번째 줄 오른쪽 */
+  grid-column: 2; /* 두 번째 열 (오른쪽) */
+  grid-row: 1 / span 2; /* 날짜+시간과 동일한 높이 */
+  font-size: 24px; /* 공항 코드를 더 크고 강조 */
   font-weight: bold;
+  text-align: right; /* 오른쪽 정렬 */
 }
+
 
 .plane-image img {
   width: 160px;   /* 원하는 너비 */

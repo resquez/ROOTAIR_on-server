@@ -26,17 +26,15 @@
         </ul>
     </nav>
 </body>
-
-    <body>
-        
-        <div class="container">
-            <div class="check-circle">
-                <p>결제 완료</p>
-                <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="25" cy="25" r="22" stroke="#D76F6F" stroke-width="4" fill="none"/>
-                    <path d="M15 25L22 32L35 18" stroke="#D76F6F" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            <p>예약 번호 : {{ booking.booking_id }}</p>
+<body>
+    <div class="container">
+        <div class="check-circle">
+            <p>결제 완료</p>
+            <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="25" cy="25" r="22" stroke="#D76F6F" stroke-width="4" fill="none"/>
+                <path d="M15 25L22 32L35 18" stroke="#D76F6F" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <p>예약 번호 : <span id="booking-id"></span></p>
             <p>항공권 예약이 완료 되었습니다.</p>
             <div class="info-box">
                 <ul>
@@ -47,9 +45,22 @@
                     <li>해당 예약은 나의 예약 메뉴에서 조회 및 변경/취소가 <span class="highlight">가능합니다</span>. <span class="highlight">등록하신 이메일 주소로 예매확인증(E-ticket)이 발송</span>되었으니 확인 부탁드립니다.</li>
                 </ul>
             </div>
-            <a href="{{ url_for('mypage.mypage') }}" class="button">나의 예약 바로가기</a>
+            <a href="/static/js/mypage/mypage.js" class="button">나의 예약 바로가기</a>
         </div>
-        <script src="/static/js/pay/pay_succ.js"></script>
-    </body>
-        </div>
-    </header>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // API 호출하여 결제 성공 정보 가져오기
+            fetch(`http://58.127.241.84:60119/api/pay/result?booking_id=${booking_id}`)  // 예약 ID를 전달
+                .then(response => response.json())
+                .then(data => {
+                    // 예약 정보 동적으로 업데이트
+                    document.getElementById("booking-id").textContent = data.booking_id;
+                    // 다른 동적인 내용도 업데이트 가능합니다 (예: 예약자 정보, 결제 내역 등)
+                })
+                .catch(error => console.error("예약 정보 로딩 오류:", error));
+        });
+    </script>
+</body>
+</header>
