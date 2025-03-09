@@ -440,32 +440,115 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // ✅ IMP(이니시스) 결제 처리 유지
-    function processInicisPayment(amount) {
-        console.log("DEBUG: KG 이니시스 결제 시작 (금액: " + amount + "원)");
+    // function processInicisPayment(amount) {
+    //     console.log("DEBUG: KG 이니시스 결제 시작 (금액: " + amount + "원)");
 
+    //     let buyerEmail = document.getElementById("email")?.value || "test@default.com";
+    //     let buyerName = document.getElementById("username")?.value || "Guest";
+    //     let buyerTel = document.getElementById("phone_number")?.value || "010-0000-0000";
+
+    //     IMP.init("imp87014111");
+
+    //     IMP.request_pay({
+    //         pg: "html5_inicis.INIpayTest",
+    //         pay_method: "card",
+    //         merchant_uid: "order_" + new Date().getTime(),
+    //         name: "항공권 결제",
+    //         amount: amount,
+    //         buyer_email: buyerEmail,
+    //         buyer_name: buyerName,
+    //         buyer_tel: buyerTel,
+    //         // m_redirect_url: "/pay/result"
+    //     }, function (rsp) {
+    //         if (rsp.success) {
+    //             // alert("결제 성공! 결제번호: " + rsp.imp_uid);
+    //             window.location.href = "/pay/pay_succ";  // 
+    //         } else {
+    //             alert("결제 실패: " + rsp.error_msg);
+    //         }
+    //     });
+    // }
+
+    
+
+    async function processInicisPayment(amount) {  
+        console.log("DEBUG: KG 이니시스 결제 시작 (금액: " + amount + "원)");
+    
         let buyerEmail = document.getElementById("email")?.value || "test@default.com";
         let buyerName = document.getElementById("username")?.value || "Guest";
         let buyerTel = document.getElementById("phone_number")?.value || "010-0000-0000";
-
-        IMP.init("imp87014111");
-
-        IMP.request_pay({
-            pg: "html5_inicis.INIpayTest",
-            pay_method: "card",
-            merchant_uid: "order_" + new Date().getTime(),
-            name: "항공권 결제",
-            amount: amount,
-            buyer_email: buyerEmail,
-            buyer_name: buyerName,
-            buyer_tel: buyerTel,
-            m_redirect_url: "/pay/result"
-        }, function (rsp) {
-            if (rsp.success) {
-                alert("결제 성공! 결제번호: " + rsp.imp_uid);
-                window.location.href = "/pay/pay_succ";
-            } else {
-                alert("결제 실패: " + rsp.error_msg);
+        let passengerNames = JSON.parse(localStorage.getItem("passenger_names")) || [];
+        let flightId = localStorage.getItem("selected_flight_id");
+    
+        try {
+            let response = await fetch("http://58.127.241.84:60119/api/member/status", {  
+                method: "GET",
+                credentials: "include"
+            });
+    
+            if (!response.ok) {
+                throw new Error("세션에서 사용자 정보를 가져올 수 없습니다.");
             }
-        });
+    
+            let data = await response.json();
+    
+            let userId = data.user_id; // ✅ userId 가져오기 완료
+    
+            IMP.init("imp87014111");
+    
+            IMP.request_pay({
+                pg: "html5_inicis.INIpayTest",
+                pay_method: "card",
+                merchant_uid: "order_" + new Date().getTime(),
+                name: "항공권 결제",
+                amount: amount,
+                buyer_email: buyerEmail,
+                buyer_name: buyerName,
+                buyer_tel: buyerTel
+            }, async function (rsp) {  
+                if (rsp.success) {
+                    try {
+                        let paymentResponse = await fetch("http://58.127.241.84:60119/api/pay/process_inicis_payment", {
+                            method: "POST",
+                            credentials: "include",
+                            body: new URLSearchParams({
+                                imp_uid: rsp.imp_uid,
+                                merchant_uid: rsp.merchant_uid,
+                                total_price: amount,
+                                user_id: userId,
+                                flight_id: flightId,
+                                eng_name: JSON.stringify(passengerNames),
+                                final_mileage: finalMileage
+                            })
+                        });
+    
+                        let result = await paymentResponse.json();
+    
+                        if (result.success && result.redirect_url) {
+                            console.log("✅ DEBUG: 부모창으로 리다이렉트 메시지 전송");
+                            
+                            // ✅ 부모창이 있는 경우 → 부모창으로 리다이렉트 요청
+                            if (window.opener) {
+                                window.opener.postMessage({ redirect_url: result.redirect_url }, "*");
+                                window.close(); // ✅ 팝업 창 닫기
+                            } else {
+                                // ✅ 부모창이 없을 경우 → 현재 창에서 바로 이동
+                                window.location.href = result.redirect_url;
+                            }
+                        }
+                    } catch (error) {
+                        console.error("🚨 ERROR: 결제 API 요청 실패", error);
+                        alert("결제 정보를 저장하는 중 오류가 발생했습니다.");
+                    }
+                } else {
+                    alert("결제 실패: " + rsp.error_msg);
+                }
+            });
+    
+        } catch (error) {
+            console.error("🚨 ERROR: 세션에서 사용자 정보를 가져오지 못했습니다.", error);
+            alert("사용자 정보를 불러오지 못했습니다. 다시 로그인해주세요.");
+        }
     }
+    
 });
