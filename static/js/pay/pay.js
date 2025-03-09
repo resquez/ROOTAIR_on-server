@@ -35,6 +35,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // ✅ localStorage에서 값 가져오기
     const flightId = localStorage.getItem("selected_flight_id");
     const passengerNames = JSON.parse(localStorage.getItem("passenger_names")) || [];
+    let finalMileage = 0; // ✅ 전역 변수로 설정하여 항상 최신 값을 유지
+
 
 
     if (!flightId) {
@@ -109,27 +111,36 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // ✅ 마일리지 데이터 가져오기 & UI 업데이트
     async function fetchMileage() {
         try {
             let response = await fetch("http://58.127.241.84:60119/api/pay/get_mileage", {
                 method: "GET",
-                credentials: "include"  // 로그인 세션 쿠키 포함
+                credentials: "include"
             });
+    
             if (!response.ok) {
                 throw new Error("마일리지 조회 실패: " + response.status);
             }
+    
             let data = await response.json();
             if (data.error) {
                 console.error("마일리지 조회 에러:", data.error);
                 return null;
             }
-
+    
             // ✅ 현재 마일리지 업데이트
             let mileageAmount = data.mileage || 0;
             updateDisplayedValue("current-mileage", mileageAmount);
             updateDisplayedValue("total-mileage", mileageAmount); // 보유 마일리지와 동일
-
+    
+            // ✅ 초기 earned-mileage & total-mileage-final 설정
+            let finalPaymentAmount = getIntValue("final-payment");
+            let earnedMileage = Math.floor(finalPaymentAmount * 0.03); // ✅ 결제 금액의 3% 적립
+            finalMileage = mileageAmount + earnedMileage; // ✅ 초기 보유 마일리지 + 적립 마일리지
+    
+            updateDisplayedValue("earned-mileage", earnedMileage);
+            updateDisplayedValue("total-mileage-final", finalMileage);
+    
             return mileageAmount;
         } catch (error) {
             console.error("마일리지 fetch 오류:", error);
@@ -221,8 +232,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return earnedMileage;
     }
 
-    let finalMileage = 0;
-
     applyMileageButton.addEventListener("click", function () {
         console.log("DEBUG: 마일리지 적용 버튼 클릭됨");
 
@@ -255,20 +264,26 @@ document.addEventListener("DOMContentLoaded", function () {
             inputMileage = finalTotalAmount;
         }
     
-        // ✅ 중복 차감 방지: 최초 결제 금액에서 사용한 마일리지만 차감
         let updatedFinalAmount = finalTotalAmount - inputMileage;
-        let earnedMileage = calculateEarnedMileage();
-        finalMileage = totalMileage - inputMileage + earnedMileage; // ✅ 결제 후 보유 마일리지 = (보유 - 사용) + 적립
+
+        // ✅ 마일리지 적용 후 새로운 earned-mileage 계산
+        let newEarnedMileage = Math.floor(updatedFinalAmount * 0.03);
+        let newTotalMileageFinal = totalMileage - inputMileage + newEarnedMileage;
     
-        appliedMileage = inputMileage; // ✅ 적용된 마일리지 저장
+        appliedMileage = inputMileage;
     
         updateDisplayedValue("mileage-used", appliedMileage);
         updateDisplayedValue("final-payment", updatedFinalAmount);
-        updateDisplayedValue("total-mileage-final", finalMileage);
+        updateDisplayedValue("earned-mileage", newEarnedMileage); // ✅ 적립 마일리지 업데이트
+        updateDisplayedValue("total-mileage-final", newTotalMileageFinal); // ✅ 최종 보유 마일리지 업데이트
+
+        // ✅ 변경된 `finalMileage` 값을 전역 변수에 저장
+        finalMileage = newTotalMileageFinal; 
     
-        console.log(`DEBUG: 사용 마일리지 = ${appliedMileage}, 최종 결제 금액 = ${updatedFinalAmount}, 결제 후 보유 마일리지 = ${finalMileage}`);
+        console.log(`DEBUG: 사용 마일리지 = ${appliedMileage}, 최종 결제 금액 = ${updatedFinalAmount}, 적립 마일리지 = ${newEarnedMileage}, 결제 후 보유 마일리지 = ${newTotalMileageFinal}`);
         alert("마일리지가 적용되었습니다!");
     });
+
 
     function updateUI(rootpayBalance, mileageUsed, finalAmount, finalMileage, earnedMileage, totalMileage) {
         updateDisplayedValue("rootpay-balance", rootpayBalance);
@@ -328,8 +343,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // ✅ 최종 결제 금액 가져오기 (정확한 값 확인)
-        let finalPaymentAmount = getIntValue("final-payment");
+        let finalPaymentAmount = getIntValue("final-payment"); // ✅ 최종 결제 금액
         let rootpayBalance = getIntValue("rootpay-balance");
+        let appliedMileage = getIntValue("mileage-used"); // ✅ 사용된 마일리지
 
         console.log(`✅ DEBUG: 최종 결제 금액 = ${finalPaymentAmount}`);
         console.log(`✅ DEBUG: Root PAY 잔액 = ${rootpayBalance}`);
@@ -380,6 +396,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let usedRootPay = Math.min(finalPaymentAmount, rootpayBalance);
         let remainingBalance = Math.max(rootpayBalance - usedRootPay, 0);
         let passengerNames = localStorage.getItem("passenger_names");
+        let passensgerCnt = JSON.parse(localStorage.getItem("passenger_names")) || [];
 
         let queryParams = new URLSearchParams({
             total_price: finalPaymentAmount.toString(),
@@ -390,7 +407,7 @@ document.addEventListener("DOMContentLoaded", function () {
             final_mileage: finalMileage,
             used_rootpay: usedRootPay.toString(),
             remaining_balance: remainingBalance.toString(),
-            passenger_count: passengerNames.length,
+            passenger_count: passensgerCnt.length,
             flight_id: flightId
         });
     

@@ -366,9 +366,8 @@ button#apply-mileage:hover {
     font-weight: bold;
 }
 #final-payment {
-    text-align: right;
+    margin-left: 50.2%;
     color: red;
-    font-size: 20px;
 }
 .mileage-item {
     display: flex;
@@ -379,6 +378,8 @@ button#apply-mileage:hover {
     justify-content: space-between;
 }
 #rootpay-balance {
-    margin-left: 70px;
-    margin-right: 60px;
+    margin-left: 42.5%; 
+}
+#mileage-used {
+    margin-left: 60%;
 }
