@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", function () {
     console.log("✅ DEBUG: 결제 정보 페이지 로드 완료");
 
@@ -5,12 +6,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const urlParams = new URLSearchParams(window.location.search);
 
     console.log("✅ DEBUG: GET 파라미터 =", Object.fromEntries(urlParams.entries())); // 🔥 GET 데이터 확인
-
-    if (!urlParams.has("total_price")) {
-        alert("🚨 ERROR: pay_info에서 GET 파라미터가 없습니다! 부모 창의 URL을 확인하세요.");
-    } else {
-        alert("✅ pay_info에서 GET 파라미터를 정상적으로 받았습니다.");
-    }
 
     console.log("total_price:", urlParams.get("total_price"));
     console.log("user_id:", urlParams.get("user_id"));
@@ -24,46 +19,51 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("flight_id:", urlParams.get("flight_id"));
 
     // ✅ HTML 요소 업데이트
-    document.getElementById("display_total_price").textContent = 
+    document.getElementById("display_total_price").textContent =
         (urlParams.get("total_price") || "0").toLocaleString("en-US");
 
     // ✅ 숨겨진 input 필드 자동 설정
     let form = document.getElementById("paymentInfoForm");
-
-    // form.elements["username"].value = urlParams.get("username") || "Unknown User";
-    // form.elements["eng_name"].value = urlParams.get("eng_name") || "N/A";
-    // form.elements["airplane_name"].value = urlParams.get("airplane_name") || "Unknown Flight";
-    // form.elements["seat_class"].value = urlParams.get("seat_class") || "Economy";
-    // form.elements["passenger_count"].value = urlParams.get("passenger_count") || "1";
-    // form.elements["total_price"].value = urlParams.get("total_price") || "0";
-    // form.elements["email"].value = urlParams.get("email") || "example@email.com";
-    // form.elements["mileage_used"].value = urlParams.get("mileage_used") || "0";
-    // form.elements["used_rootpay"].value = urlParams.get("used_rootpay") || "0";
-
-    // ✅ `flight_id`와 `user_id`가 URL에서 존재하는 경우 API 호출
+    
+    form.elements["user_id"].value = urlParams.get("user_id") || "";
+    form.elements["remaining_balance"].value = urlParams.get("remaining_balance") || "0";
+    form.elements["final_mileage"].value = urlParams.get("final_mileage") || "0";
+    form.elements["flight_id"].value = urlParams.get("flight_id") || "";
+    form.elements["username"].value = urlParams.get("username") || "Unknown User";
+    form.elements["eng_name"].value = urlParams.get("eng_name") || "N/A";
+    //form.elements["airplane_name"].value = urlParams.get("airplane_name") || "Unknown Flight";
+    //form.elements["seat_class"].value = urlParams.get("seat_class") || "Economy";
+    form.elements["passenger_count"].value = urlParams.get("passenger_count") || "1";
+    form.elements["total_price"].value = urlParams.get("total_price") || "0";
+    //form.elements["email"].value = urlParams.get("email") || "example@email.com";
+    form.elements["mileage_used"].value = urlParams.get("mileage_used") || "0";
+    form.elements["used_rootpay"].value = urlParams.get("used_rootpay") || "0";
+    
     const flightId = urlParams.get("flight_id");
     const userId = urlParams.get("user_id");
+    const totalPrice = urlParams.get("total_price");
+    const finalMileage = urlParams.get("final_mileage");
+    const remainingBalance = urlParams.get("remaining_balance");
 
     if (flightId && userId) {
-        fetch(`http://58.127.241.84:60119/api/pay_info?flight_id=${flightId}&user_id=${userId}`)
+	fetch(`http://58.127.241.84:60119/api/pay/pay_info?flight_id=${flightId}&user_id=${userId}&total_price=${totalPrice}&final_mileage=${finalMileage}&remaining_balance=${remainingBalance}`)
             .then(response => response.json())
             .then(data => {
                 console.log("✅ DEBUG: API 응답 데이터 =", data);
 
                 // ✅ API 데이터 HTML 업데이트
-                document.getElementById("display_total_price").textContent = 
-                    (data.total_price || "0").toLocaleString("en-US");
+                document.getElementById("display_total_price").textContent = (data.total_price || "0").toLocaleString("en-US");
                 document.getElementById("departure_time_debug").textContent = data.departure_time;
 
                 // ✅ 숨겨진 input 필드 업데이트
-                // document.getElementById("departure_time").value = data.departure_time;
-                // document.getElementById("arrival_time").value = data.arrival_time;
+               document.getElementById("departure_time").value = data.departure_time;
+               document.getElementById("arrival_time").value = data.arrival_time;
                 document.getElementById("flight_id").value = data.flight_id;
-                // document.getElementById("user_id").value = data.user_id;
+                document.getElementById("user_id").value = data.user_id;
                 document.getElementById("total_price").value = data.total_price;
-                // document.getElementById("passenger_count").value = data.passenger_count;
-                // document.getElementById("email").value = data.email;
-                // document.getElementById("eng_name").value = data.eng_name;
+                document.getElementById("passenger_count").value = data.passenger_count;
+                document.getElementById("email").value = data.email;
+                document.getElementById("eng_name").value = data.eng_name;
                 document.getElementById("final_mileage").value = data.final_mileage;
                 document.getElementById("remaining_balance").value = data.remaining_balance;
             })
@@ -88,19 +88,19 @@ function submitPayment() {
         "total_price", "final_mileage",
         "remaining_balance", "flight_id"
     ];
-    
-    // let missingFields = [];
-    // requiredFields.forEach(field => {
-    //     if (!formData.get(field)) {
-    //         missingFields.push(field);
-    //     }
-    // });
 
-    // if (missingFields.length > 0) {
-    //     alert(`❌ 필수 데이터가 누락되었습니다: ${missingFields.join(", ")}`);
-    //     console.error(`🚨 ERROR: 필수 데이터 누락 - ${missingFields.join(", ")}`);
-    //     return;
-    // }
+    let missingFields = [];
+    requiredFields.forEach(field => {
+        if (!formData.get(field)) {
+            missingFields.push(field);
+        }
+    });
+
+ //    if (missingFields.length > 0) {
+ //       alert(`❌ 필수 데이터가 누락되었습니다: ${missingFields.join(", ")}`);
+ //       console.error(`🚨 ERROR: 필수 데이터 누락 - ${missingFields.join(", ")}`);
+ //       return;
+ //   }
 
     console.log("✅ DEBUG: 전송할 formData 데이터:");
     for (let pair of formData.entries()) {

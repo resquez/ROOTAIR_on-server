@@ -1032,7 +1032,6 @@ a {
 .last-name,
 .first-name {
   display: block;
-  text-transform: uppercase;
   font-size: 16px;            /* 폰트 크기 */
   color: #4E4E4E;             /* 텍스트 색상 */
   font-weight: 800; /* 보통 두께 */

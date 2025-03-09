@@ -1,5 +1,4 @@
-
-                // 네비게이션 스크립트
+ // 네비게이션 스크립트
     document.addEventListener("DOMContentLoaded", function () {
         fetch("http://58.127.241.84:60119/api/member/status", {
                 mcdethod: "GET",

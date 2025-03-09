@@ -67,7 +67,7 @@ function renderFlights() {
                 </div>
                 <div>
                     <p>${flight.seat_class}</p>
-                    <p class="flight-price">${flight.price}원</p>
+                    <p class="flight-price">${Number(flight.price).toLocaleString("ko-KR")}원</p>
                 </div>
             </div>
             <input type="checkbox" class="flight-checkbox" data-flight-id="${flight.flight_id}">

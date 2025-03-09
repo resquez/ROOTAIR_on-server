@@ -69,11 +69,10 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("arrival").textContent = data.arrival_airport;
         document.getElementById("arrival-date").innerHTML = data.arrival_time.replace(" GMT", "").replace(/(\d{4}) /, "$1<br>"); 
         document.getElementById("class-info").innerHTML = `${data.seat_class} <br> ${passengerNames.length}명`;
-        document.getElementById("total-mileage").textContent = data.total_mileage;
-        document.getElementById("current-mileage").textContent = data.total_mileage;
-        document.getElementById("rootpay-balance").textContent = data.balance;
-        document.getElementById("final-payment").textContent = data.price;
-        document.getElementById("final-payment").textContent = realtotalprice.toLocaleString("en-US");
+        document.getElementById("total-mileage").textContent = Number(data.total_mileage).toLocaleString("ko-KR");
+	document.getElementById("current-mileage").textContent = Number(data.total_mileage).toLocaleString("ko-KR") + " M";
+	document.getElementById("rootpay-balance").textContent = Number(data.balance).toLocaleString("ko-KR") + " KRW";
+        document.getElementById("final-payment").textContent = Number(realtotalprice).toLocaleString("ko-KR") + " KRW";
         // ✅ 개별 운임으로 탑승자 리스트 업데이트 (price 값 전달)
         updatePassengerList(data.price);
     })
