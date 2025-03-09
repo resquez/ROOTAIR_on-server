@@ -87,28 +87,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const mileageInput = document.getElementById("mileage-input");
     const applyMileageButton = document.getElementById("apply-mileage");
-    // const usedMileageDisplay = document.getElementById("mileage-used");
-    // const finalPaymentDisplay = document.getElementById("final-payment");
-    // const totalMileageDisplay = document.getElementById("total-mileage");
-    // const totalMileageFinalDisplay = document.getElementById("total-mileage-final");
-    // const currentMileageDisplay = document.getElementById("current-mileage");
-    // const earnedMileageDisplay = document.getElementById("earned-mileage");
 
     let initialFinalPayment = getIntValue("final-payment"); // ✅ 최초 결제 금액 저장
     let appliedMileage = 0; // ✅ 적용된 마일리지 저장 변수
 
+    function updateDisplayedValue(id, value, unit = "") {
+        let element = document.getElementById(id);
+        if (element) {
+            element.textContent = `${value.toLocaleString("en-US")} ${unit}`.trim(); 
+        }
+    }
 
     function getIntValue(id) {
         let element = document.getElementById(id);
         if (!element || !element.textContent.trim()) return 0;
-        return parseInt(element.textContent.replace(/,/g, ""), 10) || 0;
-    }
-
-    function updateDisplayedValue(id, value) {
-        let element = document.getElementById(id);
-        if (element) {
-            element.textContent = value.toLocaleString("en-US"); // 1000단위 콤마 추가
-        }
+        return parseInt(element.textContent.replace(/[^0-9]/g, ""), 10) || 0; // 숫자만 추출
     }
 
     async function fetchMileage() {
@@ -128,18 +121,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 return null;
             }
     
-            // ✅ 현재 마일리지 업데이트
+            // ✅ 현재 마일리지 업데이트 (단위 포함)
             let mileageAmount = data.mileage || 0;
-            updateDisplayedValue("current-mileage", mileageAmount);
-            updateDisplayedValue("total-mileage", mileageAmount); // 보유 마일리지와 동일
+            updateDisplayedValue("current-mileage", mileageAmount, "M");
+            updateDisplayedValue("total-mileage", mileageAmount); // 보유 마일리지
+            updateDisplayedValue("mileage-used", 0, "M"); // 초기값 0 M 유지
     
             // ✅ 초기 earned-mileage & total-mileage-final 설정
             let finalPaymentAmount = getIntValue("final-payment");
             let earnedMileage = Math.floor(finalPaymentAmount * 0.03); // ✅ 결제 금액의 3% 적립
             finalMileage = mileageAmount + earnedMileage; // ✅ 초기 보유 마일리지 + 적립 마일리지
     
-            updateDisplayedValue("earned-mileage", earnedMileage);
-            updateDisplayedValue("total-mileage-final", finalMileage);
+            updateDisplayedValue("earned-mileage", earnedMileage, "M");
+            updateDisplayedValue("total-mileage-final", finalMileage, "M");
     
             return mileageAmount;
         } catch (error) {
@@ -192,38 +186,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // ✅ 페이지 로드 시 탑승자 목록 업데이트 실행
     updatePassengerList();
 
-    // let rootpayBalance = getIntValue("rootpay-balance") || 0;
-    // let totalMileage = getIntValue("total-mileage");
-    // let earnedMileage = getIntValue("earned-mileage");
-    // let mileageUsed = getIntValue("mileage-used");
-    // let passengerCount = parseInt(document.getElementById("passenger_count")?.value, 10);
-    // earnedMileage *= 4;
-
-    // let finalMileage = totalMileage + earnedMileage;
-
-    // console.log(`DEBUG: 보유 마일리지 = ${totalMileage}, 적립 마일리지 = ${earnedMileage}, ROOT PAY 잔액 = ${rootpayBalance}, 총 금액 = ${totalAmount}, 탑승자 수 = ${passengerCount}`);
-
-    // // ✅ 탑승자별 개별 운임 가격 유지 (곱하지 않음)
-    // document.querySelectorAll(".final-amount").forEach(element => {
-    //     let amount = parseInt(element.textContent.replace(/,/g, ""), 10) || 0;
-    //     element.textContent = amount.toLocaleString("en-US"); // 1000단위 콤마 적용
-    // });
-
-    // // ✅ 최종 결제 금액만 탑승자 수만큼 곱함
-    // let finalTotalAmount = totalAmount * passengerCount;
-    // updateDisplayedValue("final-payment", finalTotalAmount);
-    
-    // let selectedPayment = null;
-    // let paymentWindow = null;
-
-    // if (!applyMileageButton) {
-    //     console.error("ERROR: apply-mileage 버튼을 찾을 수 없습니다.");
-    //     return;
-    // }
-
-    // ✅ UI 업데이트
-    // updateUI(rootpayBalance, mileageUsed, finalTotalAmount, finalMileage, earnedMileage, totalMileage);
-
     // ✅ 적립 마일리지 계산 & UI 업데이트
     function calculateEarnedMileage() {
         let finalTotalAmount = getIntValue("final-payment");
@@ -272,10 +234,11 @@ document.addEventListener("DOMContentLoaded", function () {
     
         appliedMileage = inputMileage;
     
-        updateDisplayedValue("mileage-used", appliedMileage);
-        updateDisplayedValue("final-payment", updatedFinalAmount);
-        updateDisplayedValue("earned-mileage", newEarnedMileage); // ✅ 적립 마일리지 업데이트
-        updateDisplayedValue("total-mileage-final", newTotalMileageFinal); // ✅ 최종 보유 마일리지 업데이트
+        // ✅ 업데이트된 값들을 화면에 적용 (단위 포함)
+        updateDisplayedValue("mileage-used", appliedMileage, "M");
+        updateDisplayedValue("final-payment", updatedFinalAmount, "KRW");
+        updateDisplayedValue("earned-mileage", newEarnedMileage, "M");
+        updateDisplayedValue("total-mileage-final", newTotalMileageFinal, "M");
 
         // ✅ 변경된 `finalMileage` 값을 전역 변수에 저장
         finalMileage = newTotalMileageFinal; 
@@ -438,38 +401,6 @@ document.addEventListener("DOMContentLoaded", function () {
             window.location.href = event.data.redirect_url;
         }
     });
-
-    // ✅ IMP(이니시스) 결제 처리 유지
-    // function processInicisPayment(amount) {
-    //     console.log("DEBUG: KG 이니시스 결제 시작 (금액: " + amount + "원)");
-
-    //     let buyerEmail = document.getElementById("email")?.value || "test@default.com";
-    //     let buyerName = document.getElementById("username")?.value || "Guest";
-    //     let buyerTel = document.getElementById("phone_number")?.value || "010-0000-0000";
-
-    //     IMP.init("imp87014111");
-
-    //     IMP.request_pay({
-    //         pg: "html5_inicis.INIpayTest",
-    //         pay_method: "card",
-    //         merchant_uid: "order_" + new Date().getTime(),
-    //         name: "항공권 결제",
-    //         amount: amount,
-    //         buyer_email: buyerEmail,
-    //         buyer_name: buyerName,
-    //         buyer_tel: buyerTel,
-    //         // m_redirect_url: "/pay/result"
-    //     }, function (rsp) {
-    //         if (rsp.success) {
-    //             // alert("결제 성공! 결제번호: " + rsp.imp_uid);
-    //             window.location.href = "/pay/pay_succ";  // 
-    //         } else {
-    //             alert("결제 실패: " + rsp.error_msg);
-    //         }
-    //     });
-    // }
-
-    
 
     async function processInicisPayment(amount) {  
         console.log("DEBUG: KG 이니시스 결제 시작 (금액: " + amount + "원)");
