@@ -65,7 +65,6 @@ def load_user(user_id):
         return User(id=user_data['id'], username=user_data['username'],isadmin=user_data['isadmin'], password=user_data['password'], user_id = user_data['user_id'])
     return None
 
-# app.config['SESSION_COOKIE_NAME'] = "cookiethatImade"
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
 app.config['SESSION_COOKIE_HTTPONLY'] = True  # 기본값: True
