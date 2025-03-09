@@ -17,16 +17,17 @@ mypage_bp = Blueprint('mypage', __name__, url_prefix='/api/mypage')
 def get_tickets():
     """예약된 항공권 정보를 JSON 데이터로 반환하는 API"""
     try:
-        print(f"📌 현재 사용자 ID: {current_user.id}")  # ✅ 현재 로그인한 사용자의 ID 확인 로그 추가
+        print(f"📌 현재 사용자 ID: {current_user.username}")  # ✅ 현재 로그인한 사용자의 ID 확인 로그 추가
 
         with get_db_connection() as conn:
             with conn.cursor(pymysql.cursors.DictCursor) as cursor:
 
                 # ✅ 현재 로그인한 사용자의 예약 목록 조회 (user_id로 검색)
-                cursor.execute("SELECT * FROM bookings WHERE user_id = %s", (current_user.id,))
+                cursor.execute("SELECT * FROM bookings WHERE username = %s", (current_user.username,))
                 tickets = cursor.fetchall()
+                ticket_cnt = len(tickets)
 
-        print(f"📌 예약된 항공권 개수: {len(tickets)}")  # ✅ 예약 개수 확인 로그 추가
+        print(f"📌 예약된 항공권 개수: {ticket_cnt}")  # ✅ 예약 개수 확인 로그 추가
 
         if not tickets:
             return jsonify({"tickets": []})  # ✅ 조회된 데이터가 없으면 빈 리스트 반환
@@ -86,11 +87,11 @@ def mypage():
                 if not user:
                     return jsonify({"error": "사용자 정보를 찾을 수 없습니다."}), 404
 
-                cursor.execute("SELECT COUNT(*) AS flight_count FROM bookings WHERE user_id = %s", (current_user.id,))
-                flight_data = cursor.fetchone()
-                flight_count = flight_data["flight_count"] if flight_data else 0
+                cursor.execute("SELECT * FROM bookings WHERE username = %s", (current_user.username,))
+                tickets = cursor.fetchall()
+                ticket_cnt = len(tickets)
 
-                return jsonify({"user": user, "flight_count": flight_count})
+                return jsonify({"user": user, "flight_count": ticket_cnt})
 
     except Exception as e:
         print(f"🚨 Error fetching user data: {e}")
